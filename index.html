@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Mutabaah Harian</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="riwayat.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="wadah">
+
+    <!-- Layar: Loading -->
+    <section id="layar-loading" class="layar" hidden>
+      <div class="tengah">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="teks-redup" id="teks-loading">Memuat...</p>
+      </div>
+    </section>
+
+    <!-- Layar: Error -->
+    <section id="layar-error" class="layar" hidden>
+      <div class="tengah">
+        <h1 class="judul">Ups, ada masalah</h1>
+        <p class="teks-redup" id="teks-error"></p>
+        <button type="button" class="tombol tombol-utama" id="tombol-coba-lagi">Coba lagi</button>
+        <button type="button" class="tombol tombol-sekunder" id="tombol-error-awal" hidden>Ke halaman awal</button>
+      </div>
+    </section>
+
+    <!-- Layar: Pilih nama -->
+    <section id="layar-nama" class="layar" hidden>
+      <header class="kepala">
+        <h1 class="judul">Mutabaah Harian</h1>
+        <p class="teks-redup">Siapa kamu? Pilih namamu.</p>
+      </header>
+      <div id="daftar-nama" class="daftar-nama"></div>
+    </section>
+
+    <!-- Layar: PIN -->
+    <section id="layar-pin" class="layar" hidden>
+      <button type="button" class="tombol-kembali" id="tombol-kembali">&larr; Ganti nama</button>
+      <header class="kepala">
+        <p class="teks-redup">Masukkan PIN untuk</p>
+        <h1 class="judul" id="nama-pin"></h1>
+      </header>
+      <form id="form-pin" autocomplete="off">
+        <input
+          id="input-pin"
+          class="input-pin"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          autocomplete="off"
+          placeholder="••••"
+          aria-label="PIN 4 angka">
+        <p id="pesan-pin" class="pesan-error" role="alert" hidden></p>
+        <button type="submit" class="tombol tombol-utama" id="tombol-masuk">Masuk</button>
+      </form>
+    </section>
+
+    <!-- Layar: Dashboard -->
+    <section id="layar-dashboard" class="layar" hidden>
+      <header class="kepala">
+        <p class="teks-redup">Assalamu'alaikum,</p>
+        <h1 class="judul" id="nama-dashboard"></h1>
+      </header>
+
+      <label class="label-bulan" for="pilih-bulan">Bulan</label>
+      <select id="pilih-bulan" class="pilih-bulan"></select>
+
+      <div id="kosong-dashboard" class="kartu kartu-info" hidden></div>
+
+      <!-- Progress + ringkasan -->
+      <div id="ringkasan-dashboard">
+        <div class="kartu">
+          <div class="progres-baris">
+            <div class="cincin" id="cincin" role="img" aria-label="Progress keseluruhan">
+              <div class="cincin-isi" id="persen-dashboard"></div>
+            </div>
+            <div class="progres-teks">
+              <p class="label-kecil">Progress keseluruhan</p>
+              <p class="ket-tebal" id="ket-progres"></p>
+              <p class="teks-redup kecil" id="ket-periode"></p>
+            </div>
+          </div>
+          <p class="teks-redup kecil catatan-rumus">Dihitung dari sholat wajib 5 waktu, sholat tahajud, sholat dhuha dan istighfar. Puasa dan Al-Quran ditampilkan terpisah.</p>
+        </div>
+
+        <div class="ubin-grup">
+          <div class="ubin">
+            <p class="label-kecil">Puasa</p>
+            <p class="ubin-angka" id="ubin-puasa"></p>
+            <p class="ubin-ket">hari</p>
+          </div>
+          <div class="ubin">
+            <p class="label-kecil">Istighfar</p>
+            <p class="ubin-angka" id="ubin-istighfar"></p>
+            <p class="ubin-ket">hari selesai</p>
+          </div>
+          <div class="ubin">
+            <p class="label-kecil">Al-Quran</p>
+            <p class="ubin-angka" id="ubin-quran"></p>
+            <p class="ubin-ket" id="ubin-quran-ket"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kalender -->
+      <div class="kartu" id="kartu-kalender" hidden>
+        <h2 class="judul-bagian">Kalender</h2>
+        <p class="teks-redup kecil">Ketuk tanggal untuk melihat, mengisi, atau mengedit.</p>
+        <div id="kalender" class="kalender"></div>
+        <div class="legenda">
+          <span><i class="kotak kal-hari kosong"></i> Kosong</span>
+          <span><i class="kotak kal-hari rendah"></i> 1-3 sholat</span>
+          <span><i class="kotak kal-hari sedang"></i> 4-6 sholat</span>
+          <span><i class="kotak kal-hari penuh"></i> 7 sholat</span>
+        </div>
+      </div>
+
+      <!-- Statistik ibadah -->
+      <div class="kartu" id="kartu-statistik">
+        <h2 class="judul-bagian">Statistik Ibadah</h2>
+        <div class="legenda legenda-atas">
+          <span><i class="kotak seg-jamaah"></i> Berjamaah</span>
+          <span><i class="kotak seg-sendiri"></i> Sendiri</span>
+          <span><i class="kotak seg-utama"></i> Terlaksana</span>
+        </div>
+        <div id="daftar-stat"></div>
+      </div>
+
+      <button type="button" class="tombol tombol-sekunder jarak-atas" id="tombol-ganti-dashboard">Ganti pengguna</button>
+    </section>
+
+    <!-- Layar: Riwayat -->
+    <section id="layar-riwayat" class="layar" hidden>
+      <header class="kepala">
+        <h1 class="judul">Riwayat</h1>
+        <p class="teks-redup">Pilih tanggal untuk melihat, mengisi, atau mengedit.</p>
+      </header>
+      <div class="nav-bulan">
+        <button type="button" class="tombol-bulan" id="tombol-bulan-sebelumnya" aria-label="Bulan sebelumnya">&lsaquo;</button>
+        <p class="nama-bulan" id="nama-bulan"></p>
+        <button type="button" class="tombol-bulan" id="tombol-bulan-berikutnya" aria-label="Bulan berikutnya">&rsaquo;</button>
+      </div>
+      <div id="daftar-hari" class="daftar-hari"></div>
+    </section>
+
+    <!-- Layar: Detail tanggal -->
+    <section id="layar-detail" class="layar" hidden>
+      <button type="button" class="tombol-kembali" id="tombol-detail-kembali">&larr; Riwayat</button>
+      <header class="kepala">
+        <p class="teks-redup">Mutabaah tanggal</p>
+        <h1 class="judul" id="tanggal-detail"></h1>
+      </header>
+      <div id="isi-detail"></div>
+      <button type="button" class="tombol tombol-utama" id="tombol-isi-edit">Isi Mutabaah</button>
+    </section>
+
+    <!-- Layar: Form Mutabaah (hari ini atau tanggal sebelumnya) -->
+    <section id="layar-form" class="layar" hidden>
+      <button type="button" class="tombol-kembali" id="tombol-form-kembali" hidden>&larr; Kembali</button>
+      <header class="kepala">
+        <p class="teks-redup" id="sapaan-form">Assalamu'alaikum,</p>
+        <h1 class="judul" id="nama-form"></h1>
+        <p class="tanggal" id="tanggal-form"></p>
+        <p class="status" id="status-form"></p>
+      </header>
+
+      <form id="form-mutabaah" novalidate>
+
+        <!-- Sholat -->
+        <div class="kartu">
+          <div class="baris-judul">
+            <h2 class="judul-bagian">Sholat</h2>
+            <span class="hitung" id="hitung-sholat"></span>
+          </div>
+          <div id="daftar-sholat"></div>
+        </div>
+
+        <!-- Istighfar -->
+        <div class="kartu" id="kartu-istighfar">
+          <h2 class="judul-bagian">Istighfar 100x</h2>
+          <div id="pilih-istighfar"></div>
+        </div>
+
+        <!-- Puasa -->
+        <div class="kartu" id="kartu-puasa">
+          <h2 class="judul-bagian">Puasa</h2>
+          <div id="pilih-puasa"></div>
+        </div>
+
+        <!-- Al-Quran -->
+        <div class="kartu" id="kartu-alquran">
+          <h2 class="judul-bagian">Membaca Al-Quran</h2>
+          <p class="teks-redup kecil">Jumlah halaman yang dibaca pada tanggal ini. Isi 0 jika tidak membaca.</p>
+          <div class="stepper">
+            <button type="button" class="tombol-stepper" id="tombol-kurang" aria-label="Kurangi satu halaman">&minus;</button>
+            <input
+              id="input-alquran"
+              class="input-angka"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="3"
+              autocomplete="off"
+              placeholder="0"
+              aria-label="Jumlah halaman Al-Quran">
+            <button type="button" class="tombol-stepper" id="tombol-tambah" aria-label="Tambah satu halaman">+</button>
+          </div>
+        </div>
+
+        <p id="pesan-form" class="pesan-error" role="alert" hidden></p>
+
+        <!-- Bar Simpan: menempel di bawah layar agar mudah dijangkau jempol -->
+        <div class="bar-simpan">
+          <button type="submit" class="tombol tombol-utama" id="tombol-simpan">Simpan</button>
+        </div>
+      </form>
+
+      <button type="button" class="tombol tombol-sekunder jarak-atas" id="tombol-ganti-pengguna">Ganti pengguna</button>
+    </section>
+
+  </main>
+
+  <!-- Navigasi bawah (hanya tampil di Dashboard, Isi Mutabaah hari ini, dan Riwayat) -->
+  <nav id="nav-bawah" class="nav-bawah" aria-label="Navigasi utama" hidden>
+    <button type="button" class="nav-item" id="nav-dashboard">
+      <span class="nav-ikon" aria-hidden="true">📊</span>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-isi">
+      <span class="nav-ikon" aria-hidden="true">✏️</span>
+      <span>Isi Mutabaah</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-riwayat">
+      <span class="nav-ikon" aria-hidden="true">📅</span>
+      <span>Riwayat</span>
+    </button>
+  </nav>
+
+  <!-- Notifikasi (toast), tampil di atas semua layar -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

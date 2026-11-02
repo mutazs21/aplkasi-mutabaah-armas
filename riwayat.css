@@ -1,0 +1,147 @@
+/* riwayat.css — gaya tambahan STEP 14 (riwayat dan detail tanggal).
+   Memakai variabel warna dari style.css, jadi style.css harus dimuat lebih dulu. */
+
+/* Atribut hidden harus menang atas display bawaan tombol */
+.tombol[hidden],
+.tombol-kembali[hidden] {
+  display: none;
+}
+
+.jarak-bawah {
+  margin-bottom: 16px;
+}
+
+/* ====== Navigasi bulan ====== */
+.nav-bulan {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.nama-bulan {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.tombol-bulan {
+  flex: 0 0 52px;
+  height: 52px;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--warna-utama-gelap);
+  background: #ffffff;
+  border: 2px solid var(--warna-utama);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.tombol-bulan:active:not(:disabled) {
+  background: var(--warna-utama-muda);
+}
+
+.tombol-bulan:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ====== Daftar hari ====== */
+.daftar-hari {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-hari {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 15px;
+  color: var(--warna-teks);
+  background: var(--warna-kartu);
+  border: 2px solid var(--warna-garis);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.item-hari:active {
+  border-color: var(--warna-utama);
+  background: var(--warna-utama-muda);
+}
+
+.item-hari.kosong {
+  background: transparent;
+  border-style: dashed;
+}
+
+.tgl-hari {
+  flex: 0 0 84px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tgl-hari strong {
+  font-size: 17px;
+}
+
+.tgl-hari small {
+  font-size: 13px;
+  color: var(--warna-redup);
+}
+
+.ringkas {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.item-hari.kosong .ringkas {
+  color: var(--warna-redup);
+}
+
+.panah {
+  flex: 0 0 auto;
+  font-size: 22px;
+  color: var(--warna-redup);
+}
+
+/* ====== Detail tanggal ====== */
+.baris-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eef0f2;
+}
+
+.baris-detail:last-of-type {
+  border-bottom: 0;
+}
+
+.catatan-detail {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--warna-redup);
+}
+
+#layar-detail .tombol-utama {
+  margin-top: 6px;
+}
+
+@media (max-width: 360px) {
+  .tgl-hari {
+    flex-basis: 72px;
+  }
+
+  .item-hari {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
