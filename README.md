@@ -1,79 +1,163 @@
 # Mutabaah Yaumiyah
 
-Aplikasi web pencatatan mutabaah harian (sholat, istighfar, puasa, Al-Quran) untuk kelompok kecil.
+Aplikasi web untuk mencatat, memantau, dan mengevaluasi aktivitas ibadah harian secara praktis. Dirancang dengan tampilan modern, sederhana, dan responsif agar nyaman digunakan melalui perangkat mobile maupun desktop.
 
-- Frontend: HTML + Tailwind CSS (CDN) + JavaScript, tanpa build system
-- Backend: Google Apps Script (Web App)
-- Database: Google Sheets (`Anggota`, `Mutabaah`, `Config`)
+## ✨ Fitur Utama
 
-## Struktur
+### 1. Login Pengguna
+- Login menggunakan pilihan nama pengguna dan PIN 4 digit.
+- Setiap pengguna hanya dapat melihat dan mengelola data mutabaah miliknya sendiri.
+- Sistem autentikasi menggunakan token.
+- Sesi login berlaku selama 7 hari sejak aktivitas terakhir, dengan batas maksimal 30 hari.
+
+### 2. Dashboard
+- Menampilkan ringkasan aktivitas mutabaah.
+- Menampilkan statistik ibadah.
+- Memudahkan pengguna memantau perkembangan ibadah harian.
+
+### 3. Mutabaah Harian
+Mencatat aktivitas ibadah harian, meliputi:
+
+**Sholat**
+- Tahajjud
+- Subuh
+- Dhuha
+- Dzuhur
+- Ashar
+- Magrib
+- Isya
+
+Pilihan status sholat:
+- Tidak Sholat
+- Sholat Sendiri
+- Sholat Berjamaah
+
+**Aktivitas lainnya**
+- Istighfar 100 kali (Belum / Sudah).
+- Puasa (Tidak / Ya).
+- Membaca Al-Quran (jumlah halaman).
+
+### 4. Kalender Mutabaah
+- Melihat catatan mutabaah berdasarkan tanggal.
+- Memantau aktivitas harian melalui kalender.
+- Memudahkan pengguna mengetahui hari yang sudah atau belum diisi.
+
+### 5. Riwayat Mutabaah
+- Melihat riwayat pencatatan ibadah.
+- Menelusuri catatan berdasarkan tanggal.
+- Mengakses detail aktivitas yang telah dicatat.
+
+### 6. Pengisian dan Edit Data
+- Mengisi mutabaah harian.
+- Mengedit catatan tanggal sebelumnya.
+- Mencegah pengisian tanggal di masa mendatang.
+- Data yang sudah tersedia diperbarui, bukan dibuat sebagai catatan duplikat.
+
+### 7. Desain Antarmuka
+- Tampilan modern setelah redesign.
+- Menggunakan Tailwind CSS dan Lucide Icons.
+- Desain mobile-first.
+- Navigasi dan komponen dirancang agar mudah digunakan.
+- Tampilan menyesuaikan ukuran layar perangkat.
+
+## 🛠️ Teknologi
+
+| Bagian | Teknologi |
+|---|---|
+| Frontend | HTML, CSS, JavaScript |
+| CSS Framework | Tailwind CSS Play CDN |
+| Icons | Lucide Icons |
+| Backend | Google Apps Script |
+| Database | Google Sheets |
+| Hosting Frontend | GitHub Pages |
+| Hosting Backend | Google Apps Script Web App |
+
+## 📁 Struktur Folder
 
 ```text
 mutabaah/
-├── index.html      semua layar dan markup Tailwind
-├── css/style.css   gaya khusus (cincin progress, kalender, safe-area, animasi)
-├── js/app.js       logika: API, sesi, cache, tampilan
+├── index.html
+├── css/
+│   └── style.css
+├── js/
+│   └── app.js
 └── README.md
 ```
 
-Library eksternal (versi dikunci): Tailwind Play CDN 3.4.17 dan Lucide 0.469.0 (jsDelivr).
+Backend Google Apps Script dikelola secara terpisah dengan file:
 
-## Konfigurasi
-
-Buka `js/app.js`, isi `CONFIG.API_URL` dengan URL Web App Apps Script (berakhiran `/exec`).
-
-Pengaturan lain di `CONFIG`:
-
-| Nama | Arti | Bawaan |
-|---|---|---|
-| `SESI_IDLE_MS` | Sesi habis jika tidak dibuka selama ini | 7 hari |
-| `SESI_MAKS_MS` | Batas mutlak umur sesi sejak login | 30 hari |
-| `BATAS_SEGAR_MS` | Data cache lebih tua dari ini diperbarui di background | 60 detik |
-
-## Menjalankan lokal
-
-```bash
-cd mutabaah
-python3 -m http.server 8000
+```text
+Code.gs
+Api.gs
+Admin.gs
 ```
 
-Buka `http://localhost:8000`. Jangan membuka lewat `file:///` (beberapa fitur browser dibatasi).
+## ⚙️ Konfigurasi
 
-## Deployment (frontend statis)
+Sebelum menjalankan aplikasi, pastikan konfigurasi frontend sudah diarahkan ke URL Google Apps Script Web App yang benar.
 
-**Netlify Drop:** buka https://app.netlify.com/drop, seret folder `mutabaah` (seluruh folder, bukan file satu per satu).
-Pembaruan: tab Deploys, seret folder baru.
+Hal yang perlu diperhatikan:
+- URL API harus sesuai dengan deployment Google Apps Script.
+- Database Google Sheets harus tetap bersifat privat.
+- PIN pengguna harus menggunakan PIN yang telah ditentukan.
+- Konfigurasi rahasia backend tidak boleh dibagikan secara publik.
 
-**GitHub Pages:** unggah isi folder `mutabaah` ke repository, lalu Settings, Pages, pilih branch dan folder root.
+## 🚀 Deployment
 
-Backend tidak ikut berubah saat frontend dipindah hosting. Setelah mengubah kode Apps Script:
-Deploy, Kelola deployment, pensil, Versi baru, Deploy (URL tidak berubah).
+### Frontend
+1. Upload seluruh file frontend ke repository GitHub.
+2. Pastikan struktur folder tetap sesuai.
+3. Aktifkan GitHub Pages melalui pengaturan repository.
+4. Pilih branch `main` dan folder publikasi yang sesuai.
+5. Akses aplikasi melalui URL GitHub Pages.
 
-## Session
+### Backend
+1. Buka proyek Google Apps Script.
+2. Pastikan file backend sudah tersedia.
+3. Deploy sebagai Web App.
+4. Atur **Execute as: Me**.
+5. Atur akses sesuai konfigurasi aplikasi.
+6. Salin URL deployment dan pastikan frontend menggunakan URL tersebut.
 
-- Login nama + PIN 4 digit. Backend mengembalikan token. PIN tidak pernah disimpan di perangkat.
-- `localStorage` (`mutabaah_sesi_v1`) berisi token, id, nama, `dibuat`, `terakhirAktif`.
-- Sesi berakhir jika tidak dibuka 7 hari, atau 30 hari sejak login. Lalu kembali ke halaman awal.
-- Token ditolak server jika PIN diganti di Sheet atau anggota dinonaktifkan: pengguna langsung keluar.
-- Batas: masa berlaku sesi ditegakkan di browser. Token yang disalin tetap valid di server
-  sampai PIN diganti atau `TOKEN_SECRET` dihapus (Pengaturan Proyek, Properti Skrip).
+## ⚡ Optimasi Performa
 
-## Performa
+Aplikasi menggunakan mekanisme cache untuk mengurangi permintaan API yang tidak diperlukan.
 
-Data per bulan diambil dengan satu request (`ringkasBulan`) dan disimpan di memori halaman.
-Pindah tab tidak membuat request. Data lebih tua dari 60 detik diperbarui di background.
-Menyimpan memakai `simpanRingkas` yang langsung memperbarui cache.
+Beberapa optimasi:
+- Cache ringkasan data di frontend.
+- Perpindahan tab memanfaatkan cache selama masih berlaku.
+- Pembaruan ringkasan dilakukan di latar belakang.
+- Cache diperbarui setelah penyimpanan data.
+- Pengambilan data disesuaikan dengan kebutuhan pengguna yang sedang login.
 
-## Pemeliharaan
+## 🔐 Keamanan dan Privasi
 
-- Anggota baru: tambah baris di sheet `Anggota` (ID, Nama, Status `Aktif`, PIN 4 angka).
-- Anggota keluar: Status `Nonaktif` (jangan hapus baris).
-- Ganti PIN: ubah di sheet `Anggota`. Sesi lama orang itu otomatis tidak berlaku.
-- Periksa isi Sheet: jalankan `periksaDatabase()` di editor Apps Script.
-- Backup: File, Buat salinan, pada Google Sheet, secara berkala.
-- Bagikan Google Sheet hanya ke admin (kolom PIN terlihat oleh yang punya akses).
+- Setiap pengguna memiliki akses ke data mutabaah miliknya sendiri.
+- Autentikasi menggunakan PIN dan token.
+- Validasi dilakukan pada backend.
+- Data pengguna tidak dibuka secara langsung kepada publik.
+- Google Sheets tidak dibagikan secara publik.
+- Tanggal di masa mendatang tidak dapat diisi.
+- Penyimpanan data menggunakan mekanisme pengamanan untuk menghindari konflik penulisan.
 
-## Pengujian
+## 🕒 Zona Waktu
 
-Backend: jalankan `testFinal()` di editor Apps Script (harus 0 GAGAL).
-Frontend: ikuti checklist UI final (lihat dokumentasi proyek).
+Aplikasi menggunakan zona waktu:
+
+`Asia/Jakarta (WIB)`
+
+## 📌 Catatan
+
+- Aplikasi menggunakan Google Sheets sebagai database.
+- Backend berjalan melalui Google Apps Script.
+- Frontend dan backend dikelola secara terpisah.
+- Jangan menghapus atau mengubah struktur database secara sembarangan karena dapat memengaruhi data yang sudah tersimpan.
+
+## 📄 Lisensi
+
+Project ini dikembangkan untuk kebutuhan pencatatan dan pemantauan ibadah harian secara pribadi maupun bersama.
+
+---
+
+**Mutabaah Yaumiyah**  
+*Mencatat kebaikan, menjaga konsistensi, memperbaiki diri setiap hari.*
