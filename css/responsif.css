@@ -1,0 +1,210 @@
+/* css/responsif.css — layout tablet dan desktop untuk kerangka aplikasi.
+ * Dimuat SETELAH style.css dan analitik.css. Tidak mengubah gaya mobile (di bawah 640px).
+ * Breakpoint: tablet >= 640px, desktop >= 1024px.
+ * (Layout isi dashboard ada di analitik.css.)
+ */
+
+/* Elemen khusus sidebar: tersembunyi di mobile dan tablet */
+.nav-merek,
+.nav-keluar {
+  display: none;
+}
+
+
+/* ============================================================
+   TABLET (640px ke atas)
+   ============================================================ */
+
+@media (min-width: 640px) {
+  .wadah {
+    max-width: 880px;
+  }
+
+  .nav-bawah {
+    max-width: 880px;
+  }
+
+  /* Daftar nama dan riwayat: dua kolom */
+  .daftar-anggota,
+  .daftar-hari {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+
+/* ============================================================
+   DESKTOP (1024px ke atas)
+   ============================================================ */
+
+@media (min-width: 1024px) {
+
+  /* ----- Layar tanpa navigasi (nama, PIN, loading, error): kartu terpusat ----- */
+  .wadah {
+    max-width: 880px;
+    padding-top: 40px;
+  }
+
+  .wadah > .layar:not(.landing-bg) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #layar-nama {
+    max-width: 780px;
+  }
+
+  #layar-nama .daftar-anggota {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #layar-pin {
+    max-width: 420px;
+  }
+
+  /* ----- Layar dengan navigasi: konten di kanan sidebar ----- */
+  body.ada-nav .wadah {
+    max-width: none;
+    margin: 0 0 0 248px;
+    padding: 28px 32px 40px;
+  }
+
+  body.ada-nav .wadah > .layar {
+    max-width: 1100px;
+  }
+
+  body.ada-nav #layar-detail {
+    max-width: 680px;
+  }
+
+  /* ----- Sidebar ----- */
+  .nav-bawah {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    transform: none;
+    width: 248px;
+    max-width: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 6px;
+    padding: 20px 14px;
+    background: #ffffff;
+    border-top: 0;
+    border-right: 1px solid #e2e8f0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .nav-merek {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px 20px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #0b3d3a;
+  }
+
+  .nav-merek i,
+  .nav-merek svg {
+    color: #0f766e;
+  }
+
+  .nav-item {
+    flex: none;
+    max-width: none;
+    height: 48px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 14px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+
+  .nav-item:hover {
+    background: #f1f5f9;
+  }
+
+  .nav-ikon {
+    padding: 0;
+  }
+
+  .nav-item.aktif {
+    background: #d1fae5;
+  }
+
+  .nav-item.aktif .nav-ikon {
+    background: none;
+  }
+
+  .nav-keluar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    height: 46px;
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    background: none;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+
+  .nav-keluar:hover {
+    background: #f1f5f9;
+  }
+
+  /* ----- Toast dan bar simpan tanpa nav bawah ----- */
+  body.ada-nav .toast {
+    bottom: 24px;
+    left: calc(50% + 124px);
+  }
+
+  body.ada-nav .bar-simpan {
+    bottom: 0;
+    margin: 8px 0 0;
+    padding: 12px 0;
+  }
+
+  /* ----- Form: dua kolom ----- */
+  #form-mutabaah {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  #kartu-sholat {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+  }
+
+  #kartu-istighfar,
+  #kartu-puasa,
+  #kartu-alquran {
+    grid-column: 2;
+  }
+
+  #pesan-form,
+  #form-mutabaah .bar-simpan {
+    grid-column: 1 / -1;
+  }
+
+  #form-mutabaah .tombol-simpan {
+    max-width: 420px;
+    margin-left: auto;
+  }
+
+  /* Tombol Isi/Edit di detail tidak perlu selebar layar */
+  #layar-detail .tombol-simpan {
+    max-width: 420px;
+  }
+}

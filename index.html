@@ -41,6 +41,8 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/analitik.css">
+  <link rel="stylesheet" href="css/responsif.css">
 </head>
 <body>
   <noscript>
@@ -203,68 +205,114 @@
         </div>
       </header>
 
+      <!-- Kartu hari ini -->
+      <div class="kartu-d kartu-hari" id="kartu-hari-ini">
+        <span class="ikon-bulat" aria-hidden="true"><i data-lucide="calendar-check" class="h-5 w-5"></i></span>
+        <div class="info">
+          <p class="label-d">Hari ini</p>
+          <p class="mt-0.5 text-base font-bold leading-snug text-slate-900" id="hari-ini-tanggal"></p>
+          <span class="badge-hari belum" id="hari-ini-status"></span>
+        </div>
+        <button type="button" class="tombol-kecil" id="tombol-dash-isi">
+          <i data-lucide="square-pen" class="h-4 w-4"></i>
+          <span id="teks-dash-isi">Isi sekarang</span>
+        </button>
+      </div>
+
       <div id="kosong-dashboard" class="kosong-d" hidden></div>
 
-      <div id="ringkasan-dashboard">
-        <div class="kartu-d">
+      <!-- Ringkasan: pencapaian + 4 kartu -->
+      <div id="ringkasan-dashboard" class="dash-ringkas">
+        <div class="kartu-d kartu-capai">
           <div class="flex items-center gap-4">
-            <div class="cincin" id="cincin" role="img" aria-label="Progress keseluruhan">
+            <div class="cincin" id="cincin" role="img" aria-label="Pencapaian">
               <div class="cincin-isi" id="persen-dashboard"></div>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="label-d">Progress keseluruhan</p>
+              <p class="label-d">Pencapaian mutabaah</p>
               <p class="mt-1 text-base font-semibold leading-snug text-slate-900" id="ket-progres"></p>
               <p class="mt-1 text-sm text-slate-500" id="ket-periode"></p>
             </div>
           </div>
-          <p class="mt-3 text-xs leading-relaxed text-slate-500">Dihitung dari sholat 5 waktu wajib,sholat dhuha, sholat tahajud  dan istighfar. Puasa dan Al-Quran ditampilkan terpisah.</p>
+          <p class="mt-3 text-xs leading-relaxed text-slate-500">Skor dari sholat wajib, berjamaah, sunnah, istighfar, dan Al-Quran, ditambah bonus puasa kecil. Dihitung sampai kemarin, hari yang belum diisi bernilai nol.</p>
         </div>
 
-        <div class="grid grid-cols-3 gap-2.5 mb-3.5">
+        <div class="ubin-grid">
           <div class="ubin-d">
-            <span class="ikon-bulat"><i data-lucide="utensils-crossed" class="h-5 w-5"></i></span>
-            <p class="ubin-angka-d" id="ubin-puasa"></p>
-            <p class="ubin-nama-d">Puasa</p>
-            <p class="ubin-ket-d">hari</p>
-          </div>
-          <div class="ubin-d">
-            <span class="ikon-bulat"><i data-lucide="sparkles" class="h-5 w-5"></i></span>
-            <p class="ubin-angka-d" id="ubin-istighfar"></p>
-            <p class="ubin-nama-d">Istighfar</p>
-            <p class="ubin-ket-d">hari selesai</p>
+            <span class="ikon-bulat"><i data-lucide="calendar-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-aktif"></p>
+            <p class="ubin-nama-d">Hari aktif</p>
+            <p class="ubin-ket-d" id="ub-aktif-ket"></p>
           </div>
           <div class="ubin-d">
             <span class="ikon-bulat"><i data-lucide="book-open" class="h-5 w-5"></i></span>
-            <p class="ubin-angka-d" id="ubin-quran"></p>
+            <p class="ubin-angka-d" id="ub-quran"></p>
             <p class="ubin-nama-d">Al-Quran</p>
-            <p class="ubin-ket-d" id="ubin-quran-ket"></p>
+            <p class="ubin-ket-d" id="ub-quran-ket"></p>
+          </div>
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="users" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-jamaah"></p>
+            <p class="ubin-nama-d">Berjamaah</p>
+            <p class="ubin-ket-d" id="ub-jamaah-ket"></p>
+          </div>
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="badge-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-lengkap"></p>
+            <p class="ubin-nama-d">Hari lengkap</p>
+            <p class="ubin-ket-d" id="ub-lengkap-ket"></p>
           </div>
         </div>
       </div>
 
-      <div class="kartu-d" id="kartu-kalender" hidden>
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="judul-d">Kalender</h2>
-          <span class="text-sm font-semibold text-slate-500" id="kal-bulan"></span>
+      <div class="dash-kolom">
+
+        <!-- Grafik perkembangan -->
+        <div class="kartu-d" id="kartu-grafik" hidden>
+          <h2 class="judul-d">Perkembangan</h2>
+          <div class="tab-grafik" id="tab-grafik" role="tablist" aria-label="Jenis grafik">
+            <button type="button" class="tab-g aktif" role="tab" aria-selected="true" data-jenis="skor">Pencapaian</button>
+            <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="quran">Al-Quran</button>
+            <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="jamaah">Berjamaah</button>
+          </div>
+          <div class="skala-grafik" id="skala-grafik" role="group" aria-label="Skala waktu">
+            <button type="button" class="skala-g aktif" data-skala="harian" aria-pressed="true">Harian</button>
+            <button type="button" class="skala-g" data-skala="mingguan" aria-pressed="false">Mingguan</button>
+          </div>
+          <div class="grafik-wadah" id="grafik"></div>
+          <p class="grafik-info" id="grafik-info" aria-live="polite"></p>
         </div>
-        <p class="mt-1 text-sm text-slate-500">Ketuk tanggal untuk melihat, mengisi, atau mengedit.</p>
-        <div id="kalender" class="kalender"></div>
-        <div class="legenda">
-          <span><i class="kotak kal-hari kosong"></i> Kosong</span>
-          <span><i class="kotak kal-hari rendah"></i> 1-3 sholat</span>
-          <span><i class="kotak kal-hari sedang"></i> 4-6 sholat</span>
-          <span><i class="kotak kal-hari penuh"></i> 7 sholat</span>
+
+        <!-- Kalender konsistensi (heatmap) -->
+        <div class="kartu-d" id="kartu-kalender" hidden>
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="judul-d">Kalender konsistensi</h2>
+            <span class="text-sm font-semibold text-slate-500" id="kal-bulan"></span>
+          </div>
+          <p class="mt-1 text-sm text-slate-500">Ketuk tanggal untuk melihat, mengisi, atau mengedit.</p>
+          <div id="kalender" class="kalender"></div>
+          <div class="legenda">
+            <span><i class="kotak kal-hari kosong"></i> Tanpa catatan</span>
+            <span><i class="kotak kal-hari nol"></i> Catatan nol</span>
+            <span><i class="kotak kal-hari rendah"></i> Rendah</span>
+            <span><i class="kotak kal-hari sedang"></i> Sedang</span>
+            <span><i class="kotak kal-hari penuh"></i> Lengkap</span>
+          </div>
+          <p class="mt-2 text-xs leading-relaxed text-slate-500">Lengkap = 5 sholat wajib dan istighfar. Tanggal yang belum tiba tidak dianggap gagal.</p>
         </div>
+
       </div>
 
-      <div class="kartu-d" id="kartu-statistik">
-        <h2 class="judul-d">Statistik Ibadah</h2>
+      <!-- Statistik ibadah -->
+      <div class="kartu-d" id="kartu-statistik" hidden>
+        <h2 class="judul-d">Aktivitas ibadah</h2>
         <div class="legenda legenda-atas">
           <span><i class="kotak seg-jamaah"></i> Berjamaah</span>
           <span><i class="kotak seg-sendiri"></i> Sendiri</span>
           <span><i class="kotak seg-utama"></i> Terlaksana</span>
         </div>
         <div id="daftar-stat"></div>
+        <p class="mt-3 text-xs text-slate-500" id="ket-ibadah"></p>
       </div>
 
     </section>
@@ -420,8 +468,12 @@
 
   </main>
 
-  <!-- Navigasi bawah (hanya tampil di Dashboard, Isi Mutabaah hari ini, dan Riwayat) -->
+  <!-- Navigasi: bar bawah (mobile/tablet) dan sidebar kiri (desktop) -->
   <nav id="nav-bawah" class="nav-bawah" aria-label="Navigasi utama" hidden>
+    <div class="nav-merek" aria-hidden="true">
+      <i data-lucide="book-open-check" class="h-6 w-6"></i>
+      <span>Mutabaah Yaumiyah</span>
+    </div>
     <button type="button" class="nav-item" id="nav-dashboard">
       <span class="nav-ikon" aria-hidden="true"><i data-lucide="layout-dashboard" class="h-5 w-5"></i></span>
       <span>Dashboard</span>
@@ -434,11 +486,20 @@
       <span class="nav-ikon" aria-hidden="true"><i data-lucide="history" class="h-5 w-5"></i></span>
       <span>Riwayat</span>
     </button>
+    <button type="button" class="nav-keluar" id="nav-keluar">
+      <i data-lucide="log-out" class="h-5 w-5"></i>
+      <span>Keluar</span>
+    </button>
   </nav>
 
   <!-- Notifikasi (toast), tampil di atas semua layar -->
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="js/app.js"></script>
+  <!-- Urutan muat WAJIB: core, charts, auth, user, main (main paling akhir) -->
+  <script src="js/core.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

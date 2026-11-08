@@ -1,0 +1,232 @@
+/* css/analitik.css — dashboard pengguna baru: kartu, tab, grafik SVG, heatmap.
+ * Dimuat setelah style.css dan sebelum responsif.css.
+ */
+
+/* ----- Kartu hari ini ----- */
+.kartu-hari {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kartu-hari .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.badge-hari {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.badge-hari.sudah { color: #115e59; background: #d1fae5; }
+.badge-hari.belum { color: #92400e; background: #fef3c7; }
+.badge-hari.info-p { color: #475569; background: #e2e8f0; }
+
+.tombol-kecil {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #0f766e;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.tombol-kecil:active {
+  background: #115e59;
+}
+
+/* ----- Ringkasan ----- */
+.dash-ringkas {
+  margin-bottom: 0;
+}
+
+.ubin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ubin-grid .ubin-d {
+  padding: 14px 10px;
+}
+
+/* ----- Tab dan skala grafik ----- */
+.tab-grafik {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 14px;
+}
+
+.tab-g {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  background: none;
+  border: 0;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+.tab-g.aktif {
+  color: #115e59;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.skala-grafik {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.skala-g {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.skala-g.aktif {
+  color: #ffffff;
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+/* ----- Grafik SVG ----- */
+.grafik-wadah {
+  width: 100%;
+  min-height: 200px;
+  margin-top: 10px;
+}
+
+.grafik-kosong {
+  padding: 60px 8px;
+  font-size: 14px;
+  text-align: center;
+  color: #64748b;
+}
+
+.grafik-svg {
+  display: block;
+  width: 100%;
+  height: 200px;
+  overflow: visible;
+}
+
+.gr-grid { stroke: #e2e8f0; stroke-width: 1; }
+.gr-teks { fill: #64748b; font-size: 11px; font-family: inherit; }
+.gr-garis { fill: none; stroke: #0f766e; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.gr-area { fill: rgba(15, 118, 110, 0.12); stroke: none; }
+.gr-sambung { fill: none; stroke: #0f766e; stroke-width: 2; stroke-dasharray: 4 4; }
+.gr-titik { fill: #0f766e; stroke: #ffffff; stroke-width: 1.5; }
+.gr-titik-sem { fill: #ffffff; stroke: #0f766e; stroke-width: 2; }
+.gr-batang { fill: #0f766e; }
+.gr-batang-sem { fill: rgba(15, 118, 110, 0.22); stroke: #0f766e; stroke-width: 1.5; stroke-dasharray: 3 3; }
+.gr-terpilih { fill: #115e59; }
+.gr-pilih { stroke: #0f172a; stroke-width: 1; stroke-dasharray: 3 3; }
+.gr-hit { fill: transparent; cursor: pointer; }
+.gr-hit:focus { outline: none; }
+.gr-hit:focus-visible { stroke: #0f766e; stroke-width: 2; }
+
+.grafik-info {
+  min-height: 40px;
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #334155;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+/* ----- Heatmap: catatan nol ----- */
+.kal-hari.nol {
+  position: relative;
+  color: #64748b;
+  background: #e2e8f0;
+}
+
+.kal-hari.nol::after {
+  content: "";
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 5px;
+  height: 5px;
+  background: #94a3b8;
+  border-radius: 50%;
+}
+
+.kotak.kal-hari.nol::after {
+  display: none;
+}
+
+/* ----- Tablet ke atas ----- */
+@media (min-width: 640px) {
+  .dash-ringkas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .kartu-capai {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .dash-kolom {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+
+  #daftar-stat {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+
+  #daftar-stat .baris-stat:nth-last-child(2):nth-child(odd) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .tombol-kecil {
+    padding: 0 12px;
+  }
+
+  .tab-g {
+    font-size: 12px;
+    padding: 0 4px;
+  }
+}
