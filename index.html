@@ -42,7 +42,9 @@
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/analitik.css">
+  <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/responsif.css">
+  <link rel="stylesheet" href="css/leaderboard.css">
 </head>
 <body>
   <noscript>
@@ -112,9 +114,35 @@
             <i data-lucide="arrow-right" class="h-5 w-5"></i>
           </button>
           <p class="m-0 mt-4 text-center text-xs text-teal-100/60">Setiap anggota hanya dapat melihat catatannya sendiri.</p>
+          <button type="button" id="tombol-landing-admin" class="tautan-admin">
+            <i data-lucide="shield-check" class="h-4 w-4"></i>
+            Masuk sebagai admin
+          </button>
         </div>
 
       </div>
+    </section>
+
+    <!-- Layar: Login admin -->
+    <section id="layar-admin-login" class="layar" hidden>
+      <button type="button" class="kembali-baru" id="tombol-adm-login-kembali">
+        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        Beranda
+      </button>
+      <header class="mt-2">
+        <h1 class="judul-halaman">Masuk Admin</h1>
+        <p class="sub-halaman">Khusus pengelola. Anggota masuk lewat tombol Mulai Mutabaah.</p>
+      </header>
+      <form id="form-admin-login" class="adm-form" autocomplete="on">
+        <label class="adm-label" for="adm-id">ID admin</label>
+        <input id="adm-id" class="adm-input" type="text" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="20">
+        <label class="adm-label" for="adm-pw">Password</label>
+        <input id="adm-pw" class="adm-input" type="password" autocomplete="current-password" maxlength="128">
+        <div id="adm-pesan" class="adm-pesan" role="alert" hidden></div>
+        <button type="submit" class="tombol-simpan" id="tombol-adm-masuk">
+          <span id="teks-adm-masuk">Masuk</span>
+        </button>
+      </form>
     </section>
 
     <!-- Layar: Pilih nama -->
@@ -182,7 +210,7 @@
       </div>
     </section>
 
-    <!-- Layar: Dashboard -->
+    <!-- Layar: Dashboard pengguna -->
     <section id="layar-dashboard" class="layar" hidden>
 
       <header class="hero-dash">
@@ -466,9 +494,181 @@
       </div>
     </section>
 
+    <!-- ===================== ADMIN ===================== -->
+
+    <!-- Layar admin: Ringkasan -->
+    <section id="layar-adm-ringkasan" class="layar" hidden>
+      <header class="hero-dash">
+        <div class="relative flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-teal-100/80">Admin Dashboard</p>
+            <h1 id="adm-nama" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          </div>
+          <button type="button" id="tombol-adm-keluar" class="tombol-keluar" aria-label="Keluar dari akun admin">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+            Keluar
+          </button>
+        </div>
+        <div class="pilih-wadah">
+          <label for="adm-periode" class="sr-only">Pilih periode</label>
+          <i data-lucide="calendar-days" class="pilih-ikon kiri h-5 w-5"></i>
+          <select id="adm-periode" class="pilih-bulan-baru"></select>
+          <i data-lucide="chevron-down" class="pilih-ikon kanan h-5 w-5"></i>
+        </div>
+      </header>
+
+      <!-- Hari ini (selalu hari ini, tidak mengikuti periode) -->
+      <div class="kartu-d" id="adm-kartu-hari">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="judul-d">Hari ini</h2>
+          <span class="text-sm font-semibold text-slate-500" id="adm-hi-tgl"></span>
+        </div>
+        <div class="adm-hi-grid">
+          <div class="adm-hi-kotak sudah">
+            <p class="adm-hi-angka" id="adm-hi-sudah"></p>
+            <p class="adm-hi-label">Sudah mengisi</p>
+          </div>
+          <div class="adm-hi-kotak belum">
+            <p class="adm-hi-angka" id="adm-hi-belum"></p>
+            <p class="adm-hi-label">Belum mengisi</p>
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-slate-600" id="adm-hi-daftar"></p>
+      </div>
+
+      <div id="adm-kosong" class="kosong-d" hidden></div>
+
+      <div id="adm-isi">
+        <!-- Enam kartu -->
+        <div class="adm-kartu-grid">
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="users" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-total"></p><p class="ubin-nama-d">Total anggota</p><p class="ubin-ket-d">anggota aktif</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="user-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-sudah"></p><p class="ubin-nama-d">Sudah isi</p><p class="ubin-ket-d">hari ini</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="user-x" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-belum"></p><p class="ubin-nama-d">Belum isi</p><p class="ubin-ket-d">hari ini</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="gauge" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-rata"></p><p class="ubin-nama-d">Rata-rata</p><p class="ubin-ket-d" id="adm-k-rata-ket">pencapaian</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="book-open" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-quran"></p><p class="ubin-nama-d">Al-Quran</p><p class="ubin-ket-d">halaman, semua anggota</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="users-round" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-jamaah"></p><p class="ubin-nama-d">Berjamaah</p><p class="ubin-ket-d">sholat wajib</p></div>
+        </div>
+
+        <div class="dash-kolom">
+          <!-- Grafik -->
+          <div class="kartu-d">
+            <h2 class="judul-d">Perkembangan seluruh anggota</h2>
+            <div class="tab-grafik" id="adm-tab-grafik" role="tablist" aria-label="Jenis grafik">
+              <button type="button" class="tab-g aktif" role="tab" aria-selected="true" data-jenis="skor">Pencapaian</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="aktif">Aktif</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="quran">Al-Quran</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="jamaah">Berjamaah</button>
+            </div>
+            <div class="grafik-wadah" id="adm-grafik"></div>
+            <p class="grafik-info" id="adm-grafik-info" aria-live="polite"></p>
+          </div>
+
+          <!-- Perbandingan -->
+          <div class="kartu-d">
+            <h2 class="judul-d">Perbandingan antaranggota</h2>
+            <p class="mt-1 text-sm text-slate-500">Pencapaian per anggota pada periode ini.</p>
+            <div id="adm-banding" class="adm-banding"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layar admin: Anggota -->
+    <section id="layar-adm-anggota" class="layar" hidden>
+      <header class="hero-dash">
+        <div class="relative flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-teal-100/80">Admin Dashboard</p>
+            <h1 class="m-0 mt-0.5 text-2xl font-bold leading-tight text-white">Anggota</h1>
+          </div>
+          <button type="button" id="tombol-adm-keluar2" class="tombol-keluar" aria-label="Keluar dari akun admin">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+            Keluar
+          </button>
+        </div>
+        <div class="pilih-wadah">
+          <label for="adm-periode2" class="sr-only">Pilih periode</label>
+          <i data-lucide="calendar-days" class="pilih-ikon kiri h-5 w-5"></i>
+          <select id="adm-periode2" class="pilih-bulan-baru"></select>
+          <i data-lucide="chevron-down" class="pilih-ikon kanan h-5 w-5"></i>
+        </div>
+      </header>
+
+      <div class="kartu-d">
+        <div class="adm-alat">
+          <input id="adm-cari" class="adm-input" type="search" placeholder="Cari nama anggota" autocomplete="off" aria-label="Cari nama anggota">
+          <select id="adm-urut" class="adm-input" aria-label="Urutkan">
+            <option value="performa">Urut: pencapaian tertinggi</option>
+            <option value="nama">Urut: nama A-Z</option>
+            <option value="alquran">Urut: Al-Quran terbanyak</option>
+            <option value="jamaah">Urut: berjamaah terbanyak</option>
+            <option value="aktif">Urut: hari aktif terbanyak</option>
+          </select>
+        </div>
+        <p class="mt-2 text-xs text-slate-500" id="adm-ket-tabel"></p>
+        <div class="adm-tabel-wadah" id="adm-tabel-wadah"></div>
+        <div class="adm-daftar-kartu" id="adm-daftar-kartu"></div>
+        <div id="adm-tabel-kosong" class="kosong-d" hidden>Tidak ada anggota yang cocok.</div>
+      </div>
+
+      <!-- Rekap seluruh anggota -->
+      <div class="kartu-d">
+        <h2 class="judul-d">Rekap seluruh anggota</h2>
+        <p class="mt-1 text-sm text-slate-500" id="adm-rekap-periode"></p>
+        <div class="adm-rekap" id="adm-rekap"></div>
+      </div>
+    </section>
+
+    <!-- Layar admin: Detail anggota -->
+    <section id="layar-adm-detail" class="layar" hidden>
+      <header class="hero-dash">
+        <button type="button" class="tombol-keluar mb-3" id="adm-detail-kembali">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Anggota
+        </button>
+        <div class="relative">
+          <p class="m-0 text-sm text-teal-100/80">Detail anggota</p>
+          <h1 id="adm-detail-nama" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          <p class="m-0 mt-2 text-[13px] text-teal-100/80" id="adm-detail-periode"></p>
+        </div>
+      </header>
+
+      <div class="adm-kartu-grid" id="adm-detail-kartu"></div>
+
+      <div class="dash-kolom">
+        <div class="kartu-d" id="adm-detail-heat-kartu">
+          <h2 class="judul-d">Kalender konsistensi</h2>
+          <p class="mt-1 text-sm text-slate-500">Tingkat kelengkapan per hari. Isi catatan harian tidak ditampilkan.</p>
+          <div id="adm-detail-heat" class="kalender"></div>
+          <div class="legenda">
+            <span><i class="kotak kal-hari kosong"></i> Tanpa catatan</span>
+            <span><i class="kotak kal-hari nol"></i> Catatan nol</span>
+            <span><i class="kotak kal-hari rendah"></i> Rendah</span>
+            <span><i class="kotak kal-hari sedang"></i> Sedang</span>
+            <span><i class="kotak kal-hari penuh"></i> Lengkap</span>
+          </div>
+        </div>
+        <div class="kartu-d">
+          <h2 class="judul-d">Aktivitas ibadah</h2>
+          <div class="legenda legenda-atas">
+            <span><i class="kotak seg-jamaah"></i> Berjamaah</span>
+            <span><i class="kotak seg-sendiri"></i> Sendiri</span>
+            <span><i class="kotak seg-utama"></i> Terlaksana</span>
+          </div>
+          <div id="adm-detail-ibadah"></div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Navigasi: bar bawah (mobile/tablet) dan sidebar kiri (desktop) -->
+  <!-- Navigasi pengguna: bar bawah (mobile/tablet) dan sidebar kiri (desktop) -->
   <nav id="nav-bawah" class="nav-bawah" aria-label="Navigasi utama" hidden>
     <div class="nav-merek" aria-hidden="true">
       <i data-lucide="book-open-check" class="h-6 w-6"></i>
@@ -492,14 +692,36 @@
     </button>
   </nav>
 
+  <!-- Navigasi admin (dua tab) -->
+  <nav id="nav-admin" class="nav-bawah" aria-label="Navigasi admin" hidden>
+    <div class="nav-merek" aria-hidden="true">
+      <i data-lucide="shield-check" class="h-6 w-6"></i>
+      <span>Admin ARMAS</span>
+    </div>
+    <button type="button" class="nav-item" id="nav-adm-ringkasan">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="layout-dashboard" class="h-5 w-5"></i></span>
+      <span>Ringkasan</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-adm-anggota">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="users" class="h-5 w-5"></i></span>
+      <span>Anggota</span>
+    </button>
+    <button type="button" class="nav-keluar" id="nav-adm-keluar">
+      <i data-lucide="log-out" class="h-5 w-5"></i>
+      <span>Keluar</span>
+    </button>
+  </nav>
+
   <!-- Notifikasi (toast), tampil di atas semua layar -->
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-  <!-- Urutan muat WAJIB: core, charts, auth, user, main (main paling akhir) -->
+  <!-- Urutan muat WAJIB: core, charts, auth, user, admin, main (main paling akhir) -->
   <script src="js/core.js"></script>
   <script src="js/charts.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/user.js"></script>
+  <script src="js/admin.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/leaderboard.js"></script>
 </body>
 </html>

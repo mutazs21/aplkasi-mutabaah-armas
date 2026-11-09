@@ -2,17 +2,27 @@
 
 /**
  * main.js — Alur utama, pemasangan event, dan boot.
- * HARUS dimuat paling akhir (setelah core.js, charts.js, auth.js, user.js).
+ * HARUS dimuat paling akhir (setelah core.js, charts.js, auth.js, user.js, admin.js).
  */
 
 // ====================== ALUR UTAMA ======================
 
-/** Titik awal aplikasi: dashboard jika sudah login, landing jika belum/kedaluwarsa. */
+/**
+ * Titik awal aplikasi:
+ *  - sesi admin  -> panel admin
+ *  - sesi anggota -> dashboard
+ *  - tidak ada    -> landing
+ */
 async function mulai() {
   navId++;
 
   if (!apiSudahDiisi()) {
     tampilError('Alamat API belum diisi. Buka js/core.js dan isi CONFIG.API_URL dengan URL Web App (berakhiran /exec).');
+    return;
+  }
+
+  if (bacaSesiAdm()) {
+    await bukaAdmin(tabAdm || 'ringkasan', null, true);
     return;
   }
 
@@ -22,10 +32,15 @@ async function mulai() {
     return;
   }
 
+  // Sesi admin yang baru habis: tampilkan notifikasinya
+  if (sesiAdmKedaluwarsa) {
+    keLandingDariAdmin();
+    return;
+  }
   tampilLanding();
 }
 
-/** Keluar dari akun ini: hapus sesi dan cache, kembali ke landing. */
+/** Keluar dari akun anggota: hapus sesi dan cache, kembali ke landing. */
 function gantiPengguna() {
   navId++;
   hapusSesi(); // juga mengosongkan cache
@@ -37,7 +52,7 @@ function gantiPengguna() {
 
 /**
  * Dipanggil saat aplikasi kembali terlihat (tab dibuka lagi, HP dibuka lagi).
- * Memeriksa masa berlaku sesi: jika kedaluwarsa, keluar ke landing.
+ * Memeriksa masa berlaku sesi anggota: jika kedaluwarsa, keluar ke landing.
  * Mengembalikan true jika sesi masih berlaku.
  */
 function cekSesiSaatKembali() {
@@ -102,7 +117,7 @@ function pasangEvent() {
     tampil('layar-nama');
   });
 
-  // Keluar (tiga tempat: dashboard, form, sidebar desktop)
+  // Keluar anggota (tiga tempat: dashboard, form, sidebar desktop)
   $('tombol-ganti-pengguna').addEventListener('click', gantiPengguna);
   $('tombol-ganti-dashboard').addEventListener('click', gantiPengguna);
   $('nav-keluar').addEventListener('click', gantiPengguna);
@@ -130,7 +145,7 @@ function pasangEvent() {
     }
   });
 
-  // Navigasi: menekan tab yang sedang aktif tidak membuat request
+  // Navigasi anggota: menekan tab yang sedang aktif tidak membuat request
   $('nav-dashboard').addEventListener('click', function () {
     if (layarTampil('layar-dashboard')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -170,7 +185,7 @@ function pasangEvent() {
     if (tombol) aturGrafik(null, tombol.getAttribute('data-skala'));
   });
 
-  // Gambar ulang grafik saat ukuran layar berubah (ditunda agar tidak berat)
+  // Gambar ulang grafik anggota saat ukuran layar berubah (ditunda agar tidak berat)
   let timerUkuran = null;
   window.addEventListener('resize', function () {
     if (timerUkuran) clearTimeout(timerUkuran);
@@ -215,12 +230,18 @@ function pasangEvent() {
     kembaliDariDetail(tanggalForm ? tanggalForm.substring(0, 7) : null);
   });
 
+  // Admin (login, navigasi, grafik, tabel, detail)
+  pasangEventAdmin();
+
   // Saat pengguna kembali ke aplikasi: periksa masa berlaku sesi, lalu tanggal form hari ini
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') {
-      if (cekSesiSaatKembali()) {
-        cekTanggalSaatKembali();
-      }
+    if (document.visibilityState !== 'visible') return;
+    if (adminSedangTampil()) {
+      cekSesiAdminSaatKembali();
+      return;
+    }
+    if (cekSesiSaatKembali()) {
+      cekTanggalSaatKembali();
     }
   });
 }
