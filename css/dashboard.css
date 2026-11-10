@@ -1,0 +1,78 @@
+/* css/dashboard.css — tambahan dashboard anggota (STEP 2). Dimuat sebelum responsif.css. */
+
+.ds-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.ds-judul-kecil {
+  margin: 16px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Baris perbandingan antarperiode */
+.ds-b-baris {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ds-b-baris:last-child {
+  border-bottom: 0;
+}
+
+.ds-b-nama {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ds-b-nilai {
+  font-size: 16px;
+  font-weight: 800;
+  text-align: right;
+  color: #115e59;
+}
+
+.ds-b-sebelum {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ds-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.ds-delta.naik { color: #115e59; background: #d1fae5; }
+.ds-delta.turun { color: #475569; background: #e2e8f0; }
+.ds-delta.tetap { color: #475569; background: #f1f5f9; }
+
+.ds-pesan {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+@media (min-width: 1024px) {
+  .ubin-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
