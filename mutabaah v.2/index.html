@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b3d3a">
+  <title>Mutabaah Yaumiyah</title>
+
+  <!-- Sembunyikan halaman sampai gaya siap (mencegah kilasan tanpa gaya) -->
+  <style>
+    html:not(.siap) body { visibility: hidden; }
+  </style>
+  <script>
+    // Cadangan: jika skrip utama gagal, halaman tetap ditampilkan setelah 2 detik
+    setTimeout(function () { document.documentElement.classList.add('siap'); }, 2000);
+  </script>
+
+  <!-- Tailwind CSS (Play CDN, versi dikunci) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      // Preflight dimatikan: semua komponen memakai gaya eksplisit di css/style.css.
+      corePlugins: { preflight: false },
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#0f766e',
+              dark: '#115e59',
+              deep: '#0b3d3a',
+              muted: '#ecfdf5'
+            },
+            gold: '#d4b46a'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Lucide Icons (versi dikunci) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/analitik.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/responsif.css">
+  <link rel="stylesheet" href="css/leaderboard.css">
+</head>
+<body>
+  <noscript>
+    <p style="padding:24px;font-family:sans-serif">Aplikasi ini membutuhkan JavaScript. Aktifkan JavaScript di browser lalu muat ulang halaman.</p>
+  </noscript>
+
+  <main class="wadah">
+
+    <!-- Layar: Loading -->
+    <section id="layar-loading" class="layar" hidden>
+      <div class="tengah">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="teks-redup" id="teks-loading">Memuat...</p>
+      </div>
+    </section>
+
+    <!-- Layar: Error -->
+    <section id="layar-error" class="layar" hidden>
+      <div class="tengah">
+        <span class="ikon-bulat ikon-bulat-besar" aria-hidden="true"><i data-lucide="alert-circle" class="h-7 w-7"></i></span>
+        <h1 class="judul">Ups, ada masalah</h1>
+        <p class="teks-redup" id="teks-error"></p>
+        <button type="button" class="tombol tombol-utama" id="tombol-coba-lagi">Coba lagi</button>
+        <button type="button" class="tombol tombol-sekunder" id="tombol-error-awal" hidden>Ke halaman awal</button>
+      </div>
+    </section>
+
+    <!-- Layar: Landing (halaman awal) -->
+    <section id="layar-landing" class="layar landing-bg" hidden>
+      <div class="mx-auto flex min-h-full w-full max-w-md flex-col px-6 py-10 landing-isi">
+
+        <div class="flex flex-1 flex-col items-center justify-center text-center">
+          <div class="logo-lingkar mb-6 flex h-20 w-20 items-center justify-center rounded-3xl">
+            <i data-lucide="book-open-check" class="h-10 w-10 text-gold"></i>
+          </div>
+
+          <p class="m-0 mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Catatan ibadah harian</p>
+          <h1 class="m-0 text-4xl font-bold leading-tight text-white">Mutabaah<br>Yaumiyah</h1>
+          <p class="mx-auto mb-0 mt-4 max-w-xs text-base leading-relaxed text-teal-100/80">
+            Catat sholat, istighfar, puasa, dan bacaan Al-Quran setiap hari, lalu lihat perkembanganmu dari waktu ke waktu.
+          </p>
+
+          <div class="mt-8 grid w-full max-w-xs grid-cols-2 gap-3 text-left">
+            <div class="chip-landing flex items-center gap-2 rounded-2xl px-3 py-3">
+              <i data-lucide="moon-star" class="h-5 w-5 shrink-0 text-gold"></i>
+              <span class="text-sm font-medium text-white">Sholat</span>
+            </div>
+            <div class="chip-landing flex items-center gap-2 rounded-2xl px-3 py-3">
+              <i data-lucide="sparkles" class="h-5 w-5 shrink-0 text-gold"></i>
+              <span class="text-sm font-medium text-white">Istighfar</span>
+            </div>
+            <div class="chip-landing flex items-center gap-2 rounded-2xl px-3 py-3">
+              <i data-lucide="utensils-crossed" class="h-5 w-5 shrink-0 text-gold"></i>
+              <span class="text-sm font-medium text-white">Puasa</span>
+            </div>
+            <div class="chip-landing flex items-center gap-2 rounded-2xl px-3 py-3">
+              <i data-lucide="book-open" class="h-5 w-5 shrink-0 text-gold"></i>
+              <span class="text-sm font-medium text-white">Al-Quran</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-8">
+          <button type="button" id="tombol-mulai"
+                  class="tombol-mulai flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-0 bg-white px-6 py-4 text-lg font-semibold text-brand-dark">
+            Mulai Mutabaah
+            <i data-lucide="arrow-right" class="h-5 w-5"></i>
+          </button>
+          <p class="m-0 mt-4 text-center text-xs text-teal-100/60">Setiap anggota hanya dapat melihat catatannya sendiri.</p>
+          <button type="button" id="tombol-landing-admin" class="tautan-admin">
+            <i data-lucide="shield-check" class="h-4 w-4"></i>
+            Masuk sebagai admin
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Layar: Login admin -->
+    <section id="layar-admin-login" class="layar" hidden>
+      <button type="button" class="kembali-baru" id="tombol-adm-login-kembali">
+        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        Beranda
+      </button>
+      <header class="mt-2">
+        <h1 class="judul-halaman">Masuk Admin</h1>
+        <p class="sub-halaman">Khusus pengelola. Anggota masuk lewat tombol Mulai Mutabaah.</p>
+      </header>
+      <form id="form-admin-login" class="adm-form" autocomplete="on">
+        <label class="adm-label" for="adm-id">ID admin</label>
+        <input id="adm-id" class="adm-input" type="text" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="20">
+        <label class="adm-label" for="adm-pw">Password</label>
+        <input id="adm-pw" class="adm-input" type="password" autocomplete="current-password" maxlength="128">
+        <div id="adm-pesan" class="adm-pesan" role="alert" hidden></div>
+        <button type="submit" class="tombol-simpan" id="tombol-adm-masuk">
+          <span id="teks-adm-masuk">Masuk</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Layar: Pilih nama -->
+    <section id="layar-nama" class="layar" hidden>
+      <button type="button" class="kembali-baru" id="tombol-nama-kembali">
+        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        Beranda
+      </button>
+      <header class="mt-2">
+        <h1 class="judul-halaman">Siapa kamu?</h1>
+        <p class="sub-halaman">Pilih namamu untuk melanjutkan. PIN diminta di langkah berikutnya.</p>
+      </header>
+      <div id="daftar-nama" class="daftar-anggota"></div>
+    </section>
+
+    <!-- Layar: PIN -->
+    <section id="layar-pin" class="layar" hidden>
+      <div class="flex min-h-[calc(100dvh-60px)] flex-col">
+
+        <div>
+          <button type="button" class="kembali-baru" id="tombol-kembali">
+            <i data-lucide="arrow-left" class="h-5 w-5"></i>
+            Ganti nama
+          </button>
+        </div>
+
+        <div class="flex flex-1 flex-col items-center justify-center py-4 text-center">
+          <div class="avatar avatar-besar" id="avatar-pin" aria-hidden="true"></div>
+          <p class="m-0 mt-4 text-sm text-slate-500">Masukkan PIN untuk</p>
+          <h1 class="m-0 mt-1 text-2xl font-bold text-slate-900" id="nama-pin"></h1>
+
+          <div id="titik-pin" class="mt-6 flex gap-4" role="img" aria-label="PIN: 0 dari 4 digit terisi">
+            <span class="titik-pin"></span>
+            <span class="titik-pin"></span>
+            <span class="titik-pin"></span>
+            <span class="titik-pin"></span>
+          </div>
+
+          <div class="mt-5 flex min-h-[44px] items-center justify-center">
+            <div id="pesan-pin" class="flex items-center gap-2 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-700" role="alert" hidden>
+              <i data-lucide="alert-circle" class="h-4 w-4 shrink-0"></i>
+              <span id="teks-pesan-pin"></span>
+            </div>
+            <p id="status-pin" class="m-0 text-sm text-slate-500" role="status" hidden>Memeriksa...</p>
+          </div>
+        </div>
+
+        <div id="keypad" class="mx-auto grid w-full max-w-[300px] grid-cols-3 gap-3">
+          <button type="button" class="tombol-angka" data-angka="1" aria-label="1">1</button>
+          <button type="button" class="tombol-angka" data-angka="2" aria-label="2">2</button>
+          <button type="button" class="tombol-angka" data-angka="3" aria-label="3">3</button>
+          <button type="button" class="tombol-angka" data-angka="4" aria-label="4">4</button>
+          <button type="button" class="tombol-angka" data-angka="5" aria-label="5">5</button>
+          <button type="button" class="tombol-angka" data-angka="6" aria-label="6">6</button>
+          <button type="button" class="tombol-angka" data-angka="7" aria-label="7">7</button>
+          <button type="button" class="tombol-angka" data-angka="8" aria-label="8">8</button>
+          <button type="button" class="tombol-angka" data-angka="9" aria-label="9">9</button>
+          <span aria-hidden="true"></span>
+          <button type="button" class="tombol-angka" data-angka="0" aria-label="0">0</button>
+          <button type="button" class="tombol-angka polos" data-aksi="hapus" aria-label="Hapus satu digit">
+            <i data-lucide="delete" class="h-7 w-7"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Layar: Dashboard pengguna -->
+    <section id="layar-dashboard" class="layar" hidden>
+
+      <header class="hero-dash">
+        <div class="relative flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-teal-100/80">Assalamu'alaikum,</p>
+            <h1 id="nama-dashboard" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          </div>
+          <button type="button" id="tombol-ganti-dashboard" class="tombol-keluar" aria-label="Keluar dari akun">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+            Keluar
+          </button>
+        </div>
+
+        <div class="pilih-wadah">
+          <label for="pilih-bulan" class="sr-only">Pilih bulan</label>
+          <i data-lucide="calendar-days" class="pilih-ikon kiri h-5 w-5"></i>
+          <select id="pilih-bulan" class="pilih-bulan-baru"></select>
+          <i data-lucide="chevron-down" class="pilih-ikon kanan h-5 w-5"></i>
+        </div>
+      </header>
+
+      <!-- Kartu hari ini -->
+      <div class="kartu-d kartu-hari" id="kartu-hari-ini">
+        <span class="ikon-bulat" aria-hidden="true"><i data-lucide="calendar-check" class="h-5 w-5"></i></span>
+        <div class="info">
+          <p class="label-d">Hari ini</p>
+          <p class="mt-0.5 text-base font-bold leading-snug text-slate-900" id="hari-ini-tanggal"></p>
+          <span class="badge-hari belum" id="hari-ini-status"></span>
+        </div>
+        <button type="button" class="tombol-kecil" id="tombol-dash-isi">
+          <i data-lucide="square-pen" class="h-4 w-4"></i>
+          <span id="teks-dash-isi">Isi sekarang</span>
+        </button>
+      </div>
+
+      <div id="kosong-dashboard" class="kosong-d" hidden></div>
+
+      <!-- Ringkasan: pencapaian + 4 kartu -->
+      <div id="ringkasan-dashboard" class="dash-ringkas">
+        <div class="kartu-d kartu-capai">
+          <div class="flex items-center gap-4">
+            <div class="cincin" id="cincin" role="img" aria-label="Pencapaian">
+              <div class="cincin-isi" id="persen-dashboard"></div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="label-d">Pencapaian mutabaah</p>
+              <p class="mt-1 text-base font-semibold leading-snug text-slate-900" id="ket-progres"></p>
+              <p class="mt-1 text-sm text-slate-500" id="ket-periode"></p>
+            </div>
+          </div>
+          <p class="mt-3 text-xs leading-relaxed text-slate-500">Skor dari sholat wajib, berjamaah, sunnah, istighfar, dan Al-Quran, ditambah bonus puasa kecil. Dihitung sampai kemarin, hari yang belum diisi bernilai nol.</p>
+        </div>
+
+        <div class="ubin-grid">
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="calendar-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-aktif"></p>
+            <p class="ubin-nama-d">Hari aktif</p>
+            <p class="ubin-ket-d" id="ub-aktif-ket"></p>
+          </div>
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="book-open" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-quran"></p>
+            <p class="ubin-nama-d">Al-Quran</p>
+            <p class="ubin-ket-d" id="ub-quran-ket"></p>
+          </div>
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="users" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-jamaah"></p>
+            <p class="ubin-nama-d">Berjamaah</p>
+            <p class="ubin-ket-d" id="ub-jamaah-ket"></p>
+          </div>
+          <div class="ubin-d">
+            <span class="ikon-bulat"><i data-lucide="badge-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="ub-lengkap"></p>
+            <p class="ubin-nama-d">Hari lengkap</p>
+            <p class="ubin-ket-d" id="ub-lengkap-ket"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-kolom">
+
+        <!-- Grafik perkembangan -->
+        <div class="kartu-d" id="kartu-grafik" hidden>
+          <h2 class="judul-d">Perkembangan</h2>
+          <div class="tab-grafik" id="tab-grafik" role="tablist" aria-label="Jenis grafik">
+            <button type="button" class="tab-g aktif" role="tab" aria-selected="true" data-jenis="skor">Pencapaian</button>
+            <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="quran">Al-Quran</button>
+            <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="jamaah">Berjamaah</button>
+          </div>
+          <div class="skala-grafik" id="skala-grafik" role="group" aria-label="Skala waktu">
+            <button type="button" class="skala-g aktif" data-skala="harian" aria-pressed="true">Harian</button>
+            <button type="button" class="skala-g" data-skala="mingguan" aria-pressed="false">Mingguan</button>
+          </div>
+          <div class="grafik-wadah" id="grafik"></div>
+          <p class="grafik-info" id="grafik-info" aria-live="polite"></p>
+        </div>
+
+        <!-- Kalender konsistensi (heatmap) -->
+        <div class="kartu-d" id="kartu-kalender" hidden>
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="judul-d">Kalender konsistensi</h2>
+            <span class="text-sm font-semibold text-slate-500" id="kal-bulan"></span>
+          </div>
+          <p class="mt-1 text-sm text-slate-500">Ketuk tanggal untuk melihat, mengisi, atau mengedit.</p>
+          <div id="kalender" class="kalender"></div>
+          <div class="legenda">
+            <span><i class="kotak kal-hari kosong"></i> Tanpa catatan</span>
+            <span><i class="kotak kal-hari nol"></i> Catatan nol</span>
+            <span><i class="kotak kal-hari rendah"></i> Rendah</span>
+            <span><i class="kotak kal-hari sedang"></i> Sedang</span>
+            <span><i class="kotak kal-hari penuh"></i> Lengkap</span>
+          </div>
+          <p class="mt-2 text-xs leading-relaxed text-slate-500">Lengkap = 5 sholat wajib dan istighfar. Tanggal yang belum tiba tidak dianggap gagal.</p>
+        </div>
+
+      </div>
+
+      <!-- Statistik ibadah -->
+      <div class="kartu-d" id="kartu-statistik" hidden>
+        <h2 class="judul-d">Aktivitas ibadah</h2>
+        <div class="legenda legenda-atas">
+          <span><i class="kotak seg-jamaah"></i> Berjamaah</span>
+          <span><i class="kotak seg-sendiri"></i> Sendiri</span>
+          <span><i class="kotak seg-utama"></i> Terlaksana</span>
+        </div>
+        <div id="daftar-stat"></div>
+        <p class="mt-3 text-xs text-slate-500" id="ket-ibadah"></p>
+      </div>
+
+    </section>
+
+    <!-- Layar: Riwayat -->
+    <section id="layar-riwayat" class="layar" hidden>
+      <header class="hero-dash">
+        <div class="relative">
+          <h1 class="m-0 text-2xl font-bold leading-tight text-white">Riwayat</h1>
+          <p class="m-0 mt-1 text-sm text-teal-100/80">Ketuk tanggal untuk melihat, mengisi, atau mengedit.</p>
+        </div>
+        <div class="nav-bulan-b">
+          <button type="button" class="tombol-bulan-b" id="tombol-bulan-sebelumnya" aria-label="Bulan sebelumnya">
+            <i data-lucide="chevron-left" class="h-5 w-5"></i>
+          </button>
+          <div class="min-w-0 flex-1 text-center">
+            <p class="nama-bulan-b" id="nama-bulan"></p>
+            <p class="ket-bulan-b" id="ringkas-bulan"></p>
+          </div>
+          <button type="button" class="tombol-bulan-b" id="tombol-bulan-berikutnya" aria-label="Bulan berikutnya">
+            <i data-lucide="chevron-right" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </header>
+      <div id="daftar-hari" class="daftar-hari"></div>
+    </section>
+
+    <!-- Layar: Detail tanggal -->
+    <section id="layar-detail" class="layar" hidden>
+      <header class="hero-dash">
+        <button type="button" class="tombol-keluar mb-3" id="tombol-detail-kembali">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          <span id="teks-detail-kembali">Riwayat</span>
+        </button>
+        <div class="relative">
+          <p class="m-0 text-sm text-teal-100/80">Mutabaah tanggal</p>
+          <h1 id="tanggal-detail" class="m-0 mt-0.5 text-2xl font-bold leading-tight text-white"></h1>
+          <p id="status-detail" class="badge-status"></p>
+        </div>
+      </header>
+      <div id="isi-detail"></div>
+      <div class="bar-simpan">
+        <button type="button" class="tombol-simpan" id="tombol-isi-edit">
+          <i data-lucide="square-pen" class="h-5 w-5"></i>
+          <span id="teks-isi-edit">Isi Mutabaah</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Layar: Form Mutabaah (hari ini atau tanggal sebelumnya) -->
+    <section id="layar-form" class="layar" hidden>
+
+      <header class="hero-dash">
+        <button type="button" class="tombol-keluar mb-3" id="tombol-form-kembali" hidden>
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Kembali
+        </button>
+        <div class="relative">
+          <p class="m-0 text-sm text-teal-100/80" id="sapaan-form">Assalamu'alaikum,</p>
+          <h1 id="nama-form" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          <p class="m-0 mt-3 flex items-center gap-2 text-sm font-semibold text-gold">
+            <i data-lucide="calendar-days" class="h-4 w-4 shrink-0"></i>
+            <span id="tanggal-form"></span>
+          </p>
+          <p class="m-0 mt-1.5 text-[13px] leading-snug text-teal-100/80" id="status-form"></p>
+        </div>
+      </header>
+
+      <form id="form-mutabaah" novalidate>
+
+        <div class="kartu-d" id="kartu-sholat">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="judul-d">Sholat</h2>
+            <span class="text-sm font-semibold text-slate-500" id="hitung-sholat"></span>
+          </div>
+          <div class="bar bar-form"><div class="bar-isi seg-utama" id="bar-sholat"></div></div>
+          <div id="daftar-sholat"></div>
+        </div>
+
+        <div class="kartu-d" id="kartu-istighfar">
+          <div class="mb-3 flex items-center gap-3">
+            <span class="stat-ikon" aria-hidden="true"><i data-lucide="sparkles" class="h-[18px] w-[18px]"></i></span>
+            <div class="min-w-0">
+              <h2 class="judul-d">Istighfar 100x</h2>
+              <p class="mt-0.5 text-[13px] text-slate-500">Sudahkah istighfar 100 kali?</p>
+            </div>
+          </div>
+          <div id="pilih-istighfar"></div>
+        </div>
+
+        <div class="kartu-d" id="kartu-puasa">
+          <div class="mb-3 flex items-center gap-3">
+            <span class="stat-ikon" aria-hidden="true"><i data-lucide="utensils-crossed" class="h-[18px] w-[18px]"></i></span>
+            <div class="min-w-0">
+              <h2 class="judul-d">Puasa</h2>
+              <p class="mt-0.5 text-[13px] text-slate-500">Apakah berpuasa pada tanggal ini?</p>
+            </div>
+          </div>
+          <div id="pilih-puasa"></div>
+        </div>
+
+        <div class="kartu-d" id="kartu-alquran">
+          <div class="mb-1 flex items-center gap-3">
+            <span class="stat-ikon" aria-hidden="true"><i data-lucide="book-open" class="h-[18px] w-[18px]"></i></span>
+            <div class="min-w-0">
+              <h2 class="judul-d">Membaca Al-Quran</h2>
+              <p class="mt-0.5 text-[13px] text-slate-500">Jumlah halaman. Isi 0 jika tidak membaca.</p>
+            </div>
+          </div>
+          <div class="stepper-b">
+            <button type="button" class="tombol-stepper-b" id="tombol-kurang" aria-label="Kurangi satu halaman">
+              <i data-lucide="minus" class="h-6 w-6"></i>
+            </button>
+            <input
+              id="input-alquran"
+              class="input-angka-b"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="3"
+              autocomplete="off"
+              placeholder="0"
+              aria-label="Jumlah halaman Al-Quran">
+            <button type="button" class="tombol-stepper-b" id="tombol-tambah" aria-label="Tambah satu halaman">
+              <i data-lucide="plus" class="h-6 w-6"></i>
+            </button>
+          </div>
+          <div class="chip-baris" id="chip-alquran">
+            <button type="button" class="chip-q" data-tambah="5">+5</button>
+            <button type="button" class="chip-q" data-tambah="10">+10</button>
+            <button type="button" class="chip-q" data-set="0">Tidak membaca (0)</button>
+          </div>
+        </div>
+
+        <div id="pesan-form" class="mb-3 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-medium leading-snug text-red-700" role="alert" hidden></div>
+
+        <div class="bar-simpan">
+          <button type="submit" class="tombol-simpan" id="tombol-simpan">
+            <span id="ikon-simpan" class="inline-flex"><i data-lucide="check" class="h-5 w-5"></i></span>
+            <span class="spin-kecil" id="spin-simpan" hidden></span>
+            <span id="teks-simpan">Simpan</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center">
+        <button type="button" class="tombol-teks" id="tombol-ganti-pengguna">
+          <i data-lucide="log-out" class="h-4 w-4"></i>
+          Keluar dari akun
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== ADMIN ===================== -->
+
+    <!-- Layar admin: Ringkasan -->
+    <section id="layar-adm-ringkasan" class="layar" hidden>
+      <header class="hero-dash">
+        <div class="relative flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-teal-100/80">Admin Dashboard</p>
+            <h1 id="adm-nama" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          </div>
+          <button type="button" id="tombol-adm-keluar" class="tombol-keluar" aria-label="Keluar dari akun admin">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+            Keluar
+          </button>
+        </div>
+        <div class="pilih-wadah">
+          <label for="adm-periode" class="sr-only">Pilih periode</label>
+          <i data-lucide="calendar-days" class="pilih-ikon kiri h-5 w-5"></i>
+          <select id="adm-periode" class="pilih-bulan-baru"></select>
+          <i data-lucide="chevron-down" class="pilih-ikon kanan h-5 w-5"></i>
+        </div>
+      </header>
+
+      <!-- Hari ini (selalu hari ini, tidak mengikuti periode) -->
+      <div class="kartu-d" id="adm-kartu-hari">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="judul-d">Hari ini</h2>
+          <span class="text-sm font-semibold text-slate-500" id="adm-hi-tgl"></span>
+        </div>
+        <div class="adm-hi-grid">
+          <div class="adm-hi-kotak sudah">
+            <p class="adm-hi-angka" id="adm-hi-sudah"></p>
+            <p class="adm-hi-label">Sudah mengisi</p>
+          </div>
+          <div class="adm-hi-kotak belum">
+            <p class="adm-hi-angka" id="adm-hi-belum"></p>
+            <p class="adm-hi-label">Belum mengisi</p>
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-slate-600" id="adm-hi-daftar"></p>
+      </div>
+
+      <div id="adm-kosong" class="kosong-d" hidden></div>
+
+      <div id="adm-isi">
+        <!-- Enam kartu -->
+        <div class="adm-kartu-grid">
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="users" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-total"></p><p class="ubin-nama-d">Total anggota</p><p class="ubin-ket-d">anggota aktif</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="user-check" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-sudah"></p><p class="ubin-nama-d">Sudah isi</p><p class="ubin-ket-d">hari ini</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="user-x" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-belum"></p><p class="ubin-nama-d">Belum isi</p><p class="ubin-ket-d">hari ini</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="gauge" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-rata"></p><p class="ubin-nama-d">Rata-rata</p><p class="ubin-ket-d" id="adm-k-rata-ket">pencapaian</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="book-open" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-quran"></p><p class="ubin-nama-d">Al-Quran</p><p class="ubin-ket-d">halaman, semua anggota</p></div>
+          <div class="ubin-d"><span class="ikon-bulat"><i data-lucide="users-round" class="h-5 w-5"></i></span>
+            <p class="ubin-angka-d" id="adm-k-jamaah"></p><p class="ubin-nama-d">Berjamaah</p><p class="ubin-ket-d">sholat wajib</p></div>
+        </div>
+
+        <div class="dash-kolom">
+          <!-- Grafik -->
+          <div class="kartu-d">
+            <h2 class="judul-d">Perkembangan seluruh anggota</h2>
+            <div class="tab-grafik" id="adm-tab-grafik" role="tablist" aria-label="Jenis grafik">
+              <button type="button" class="tab-g aktif" role="tab" aria-selected="true" data-jenis="skor">Pencapaian</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="aktif">Aktif</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="quran">Al-Quran</button>
+              <button type="button" class="tab-g" role="tab" aria-selected="false" data-jenis="jamaah">Berjamaah</button>
+            </div>
+            <div class="grafik-wadah" id="adm-grafik"></div>
+            <p class="grafik-info" id="adm-grafik-info" aria-live="polite"></p>
+          </div>
+
+          <!-- Perbandingan -->
+          <div class="kartu-d">
+            <h2 class="judul-d">Perbandingan antaranggota</h2>
+            <p class="mt-1 text-sm text-slate-500">Pencapaian per anggota pada periode ini.</p>
+            <div id="adm-banding" class="adm-banding"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layar admin: Anggota -->
+    <section id="layar-adm-anggota" class="layar" hidden>
+      <header class="hero-dash">
+        <div class="relative flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-teal-100/80">Admin Dashboard</p>
+            <h1 class="m-0 mt-0.5 text-2xl font-bold leading-tight text-white">Anggota</h1>
+          </div>
+          <button type="button" id="tombol-adm-keluar2" class="tombol-keluar" aria-label="Keluar dari akun admin">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+            Keluar
+          </button>
+        </div>
+        <div class="pilih-wadah">
+          <label for="adm-periode2" class="sr-only">Pilih periode</label>
+          <i data-lucide="calendar-days" class="pilih-ikon kiri h-5 w-5"></i>
+          <select id="adm-periode2" class="pilih-bulan-baru"></select>
+          <i data-lucide="chevron-down" class="pilih-ikon kanan h-5 w-5"></i>
+        </div>
+      </header>
+
+      <div class="kartu-d">
+        <div class="adm-alat">
+          <input id="adm-cari" class="adm-input" type="search" placeholder="Cari nama anggota" autocomplete="off" aria-label="Cari nama anggota">
+          <select id="adm-urut" class="adm-input" aria-label="Urutkan">
+            <option value="performa">Urut: pencapaian tertinggi</option>
+            <option value="nama">Urut: nama A-Z</option>
+            <option value="alquran">Urut: Al-Quran terbanyak</option>
+            <option value="jamaah">Urut: berjamaah terbanyak</option>
+            <option value="aktif">Urut: hari aktif terbanyak</option>
+          </select>
+        </div>
+        <p class="mt-2 text-xs text-slate-500" id="adm-ket-tabel"></p>
+        <div class="adm-tabel-wadah" id="adm-tabel-wadah"></div>
+        <div class="adm-daftar-kartu" id="adm-daftar-kartu"></div>
+        <div id="adm-tabel-kosong" class="kosong-d" hidden>Tidak ada anggota yang cocok.</div>
+      </div>
+
+      <!-- Rekap seluruh anggota -->
+      <div class="kartu-d">
+        <h2 class="judul-d">Rekap seluruh anggota</h2>
+        <p class="mt-1 text-sm text-slate-500" id="adm-rekap-periode"></p>
+        <div class="adm-rekap" id="adm-rekap"></div>
+      </div>
+    </section>
+
+    <!-- Layar admin: Detail anggota -->
+    <section id="layar-adm-detail" class="layar" hidden>
+      <header class="hero-dash">
+        <button type="button" class="tombol-keluar mb-3" id="adm-detail-kembali">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Anggota
+        </button>
+        <div class="relative">
+          <p class="m-0 text-sm text-teal-100/80">Detail anggota</p>
+          <h1 id="adm-detail-nama" class="m-0 mt-0.5 truncate text-2xl font-bold leading-tight text-white"></h1>
+          <p class="m-0 mt-2 text-[13px] text-teal-100/80" id="adm-detail-periode"></p>
+        </div>
+      </header>
+
+      <div class="adm-kartu-grid" id="adm-detail-kartu"></div>
+
+      <div class="dash-kolom">
+        <div class="kartu-d" id="adm-detail-heat-kartu">
+          <h2 class="judul-d">Kalender konsistensi</h2>
+          <p class="mt-1 text-sm text-slate-500">Tingkat kelengkapan per hari. Isi catatan harian tidak ditampilkan.</p>
+          <div id="adm-detail-heat" class="kalender"></div>
+          <div class="legenda">
+            <span><i class="kotak kal-hari kosong"></i> Tanpa catatan</span>
+            <span><i class="kotak kal-hari nol"></i> Catatan nol</span>
+            <span><i class="kotak kal-hari rendah"></i> Rendah</span>
+            <span><i class="kotak kal-hari sedang"></i> Sedang</span>
+            <span><i class="kotak kal-hari penuh"></i> Lengkap</span>
+          </div>
+        </div>
+        <div class="kartu-d">
+          <h2 class="judul-d">Aktivitas ibadah</h2>
+          <div class="legenda legenda-atas">
+            <span><i class="kotak seg-jamaah"></i> Berjamaah</span>
+            <span><i class="kotak seg-sendiri"></i> Sendiri</span>
+            <span><i class="kotak seg-utama"></i> Terlaksana</span>
+          </div>
+          <div id="adm-detail-ibadah"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navigasi pengguna: bar bawah (mobile/tablet) dan sidebar kiri (desktop) -->
+  <nav id="nav-bawah" class="nav-bawah" aria-label="Navigasi utama" hidden>
+    <div class="nav-merek" aria-hidden="true">
+      <i data-lucide="book-open-check" class="h-6 w-6"></i>
+      <span>Mutabaah Yaumiyah</span>
+    </div>
+    <button type="button" class="nav-item" id="nav-dashboard">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="layout-dashboard" class="h-5 w-5"></i></span>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-isi">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="square-pen" class="h-5 w-5"></i></span>
+      <span>Isi Mutabaah</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-riwayat">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="history" class="h-5 w-5"></i></span>
+      <span>Riwayat</span>
+    </button>
+    <button type="button" class="nav-keluar" id="nav-keluar">
+      <i data-lucide="log-out" class="h-5 w-5"></i>
+      <span>Keluar</span>
+    </button>
+  </nav>
+
+  <!-- Navigasi admin (dua tab) -->
+  <nav id="nav-admin" class="nav-bawah" aria-label="Navigasi admin" hidden>
+    <div class="nav-merek" aria-hidden="true">
+      <i data-lucide="shield-check" class="h-6 w-6"></i>
+      <span>Admin ARMAS</span>
+    </div>
+    <button type="button" class="nav-item" id="nav-adm-ringkasan">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="layout-dashboard" class="h-5 w-5"></i></span>
+      <span>Ringkasan</span>
+    </button>
+    <button type="button" class="nav-item" id="nav-adm-anggota">
+      <span class="nav-ikon" aria-hidden="true"><i data-lucide="users" class="h-5 w-5"></i></span>
+      <span>Anggota</span>
+    </button>
+    <button type="button" class="nav-keluar" id="nav-adm-keluar">
+      <i data-lucide="log-out" class="h-5 w-5"></i>
+      <span>Keluar</span>
+    </button>
+  </nav>
+
+  <!-- Notifikasi (toast), tampil di atas semua layar -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Urutan muat WAJIB: core, charts, auth, user, admin, main (main paling akhir) -->
+  <script src="js/core.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/leaderboard.js"></script>
+</body>
+</html>
