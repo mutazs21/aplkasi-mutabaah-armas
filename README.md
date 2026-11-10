@@ -1,163 +1,84 @@
 # Mutabaah Yaumiyah
 
-Aplikasi web untuk mencatat, memantau, dan mengevaluasi aktivitas ibadah harian secara praktis. Dirancang dengan tampilan modern, sederhana, dan responsif agar nyaman digunakan melalui perangkat mobile maupun desktop.
+Aplikasi pencatatan mutabaah harian (sholat, istighfar, puasa, Al-Quran) untuk kelompok kecil, dengan
+dua peran: **anggota** (mengisi dan melihat perkembangan) dan **admin** (memantau seluruh anggota).
 
-## ✨ Fitur Utama
+- Frontend: HTML, Tailwind CSS (Play CDN 3.4.17), Lucide 0.469.0, JavaScript biasa (tanpa build)
+- Backend: Google Apps Script (Web App)
+- Database: Google Sheets
+- Zona waktu: Asia/Jakarta
 
-### 1. Login Pengguna
-- Login menggunakan pilihan nama pengguna dan PIN 4 digit.
-- Setiap pengguna hanya dapat melihat dan mengelola data mutabaah miliknya sendiri.
-- Sistem autentikasi menggunakan token.
-- Sesi login berlaku selama 7 hari sejak aktivitas terakhir, dengan batas maksimal 30 hari.
-
-### 2. Dashboard
-- Menampilkan ringkasan aktivitas mutabaah.
-- Menampilkan statistik ibadah.
-- Memudahkan pengguna memantau perkembangan ibadah harian.
-
-### 3. Mutabaah Harian
-Mencatat aktivitas ibadah harian, meliputi:
-
-**Sholat**
-- Tahajjud
-- Subuh
-- Dhuha
-- Dzuhur
-- Ashar
-- Magrib
-- Isya
-
-Pilihan status sholat:
-- Tidak Sholat
-- Sholat Sendiri
-- Sholat Berjamaah
-
-**Aktivitas lainnya**
-- Istighfar 100 kali (Belum / Sudah).
-- Puasa (Tidak / Ya).
-- Membaca Al-Quran (jumlah halaman).
-
-### 4. Kalender Mutabaah
-- Melihat catatan mutabaah berdasarkan tanggal.
-- Memantau aktivitas harian melalui kalender.
-- Memudahkan pengguna mengetahui hari yang sudah atau belum diisi.
-
-### 5. Riwayat Mutabaah
-- Melihat riwayat pencatatan ibadah.
-- Menelusuri catatan berdasarkan tanggal.
-- Mengakses detail aktivitas yang telah dicatat.
-
-### 6. Pengisian dan Edit Data
-- Mengisi mutabaah harian.
-- Mengedit catatan tanggal sebelumnya.
-- Mencegah pengisian tanggal di masa mendatang.
-- Data yang sudah tersedia diperbarui, bukan dibuat sebagai catatan duplikat.
-
-### 7. Desain Antarmuka
-- Tampilan modern setelah redesign.
-- Menggunakan Tailwind CSS dan Lucide Icons.
-- Desain mobile-first.
-- Navigasi dan komponen dirancang agar mudah digunakan.
-- Tampilan menyesuaikan ukuran layar perangkat.
-
-## 🛠️ Teknologi
-
-| Bagian | Teknologi |
-|---|---|
-| Frontend | HTML, CSS, JavaScript |
-| CSS Framework | Tailwind CSS Play CDN |
-| Icons | Lucide Icons |
-| Backend | Google Apps Script |
-| Database | Google Sheets |
-| Hosting Frontend | GitHub Pages |
-| Hosting Backend | Google Apps Script Web App |
-
-## 📁 Struktur Folder
+## Struktur frontend
 
 ```text
 mutabaah/
 ├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   └── app.js
+├── css/  style.css  analitik.css  admin.css  leaderboard.css  integrasi.css  responsif.css
+├── js/   core.js  charts.js  auth.js  user.js  admin.js  leaderboard.js  integrasi.js  main.js
 └── README.md
 ```
 
-Backend Google Apps Script dikelola secara terpisah dengan file:
+Urutan muat skrip wajib: `core, charts, auth, user, admin, leaderboard, integrasi, main` (`main.js` terakhir).
+CSS: `responsif.css` dimuat terakhir. Setelah menempel file, jalankan `ujiIntegrasi()` di Console.
 
-```text
-Code.gs
-Api.gs
-Admin.gs
-```
+## Backend (Apps Script)
 
-## ⚙️ Konfigurasi
+`Code.gs` (setup, Config, menu), `Api.gs` (router, login anggota), `Riwayat.gs` (penulisan data),
+`Ringkas.gs`, `Dashboard.gs`, `Skor.gs` (mesin perhitungan murni), `Agregat.gs` (admin),
+`Leaderboard.gs`, `AdminAuth.gs`, `Versi.gs`, `Admin.gs` (alat pemeliharaan),
+`PeriksaSistem.gs`, `Diagnosa.gs`, dan file tes (`Tes*.gs`).
 
-Sebelum menjalankan aplikasi, pastikan konfigurasi frontend sudah diarahkan ke URL Google Apps Script Web App yang benar.
+Action: `anggota`, `login`, `ringkasBulan`, `simpanRingkas`, `leaderboard` (anggota dan admin),
+`adminLogin`, `adminSaya`, `adminRingkasan` (admin saja), serta action lama untuk kompatibilitas.
 
-Hal yang perlu diperhatikan:
-- URL API harus sesuai dengan deployment Google Apps Script.
-- Database Google Sheets harus tetap bersifat privat.
-- PIN pengguna harus menggunakan PIN yang telah ditentukan.
-- Konfigurasi rahasia backend tidak boleh dibagikan secara publik.
+## Peran dan keamanan
 
-## 🚀 Deployment
+- **Anggota:** nama + PIN 4 angka. Hanya data sendiri yang bisa dibaca atau ditulis. Identitas hanya dari token.
+- **Admin:** akun terpisah di sheet `Admin` (bukan bagian dari anggota). Password disimpan sebagai hash,
+  dibuat lewat menu **Mutabaah → Buat/ubah akun admin** (tidak pernah ada di kode atau Sheet).
+  Token admin kedaluwarsa 8 jam di server, disimpan di `sessionStorage`.
+  Mengganti password atau menonaktifkan akun mencabut semua token lamanya.
+- Peran hanya ditentukan backend dari token. Field `role` atau `id` dari browser tidak pernah dibaca.
+- Leaderboard hanya mengirim nama dan angka agregat (tanpa ID dan tanpa catatan harian).
+- Sesi anggota: kedaluwarsa 7 hari tanpa dibuka, maksimal 30 hari (ditegakkan di browser).
+- Satu identitas aktif per perangkat: login anggota menghapus sesi admin dan sebaliknya.
+- Batas yang perlu diketahui: Apps Script tidak punya bcrypt/argon2, PIN 4 angka mudah ditebak,
+  PIN anggota tersimpan di Sheet (bagikan Sheet hanya ke pengelola), dan token anggota tidak punya
+  kedaluwarsa di server. Jangan hapus properti `TOKEN_SECRET` dan `ADMIN_PEPPER` kecuali ingin mencabut semua sesi.
 
-### Frontend
-1. Upload seluruh file frontend ke repository GitHub.
-2. Pastikan struktur folder tetap sesuai.
-3. Aktifkan GitHub Pages melalui pengaturan repository.
-4. Pilih branch `main` dan folder publikasi yang sesuai.
-5. Akses aplikasi melalui URL GitHub Pages.
+## Penilaian (ringkas)
 
-### Backend
-1. Buka proyek Google Apps Script.
-2. Pastikan file backend sudah tersedia.
-3. Deploy sebagai Web App.
-4. Atur **Execute as: Me**.
-5. Atur akses sesuai konfigurasi aplikasi.
-6. Salin URL deployment dan pastikan frontend menggunakan URL tersebut.
+Skor harian 0-100: sholat wajib 45, berjamaah 15, sunnah 10, istighfar 10, Al-Quran 20 (target 5 halaman).
+Performa = rata-rata skor hari yang sudah selesai + bonus puasa maksimal 5, dibatasi 100.
+Hari lengkap = 5 sholat wajib + istighfar. Rasio dihitung sampai kemarin; total Al-Quran dan berjamaah
+menyertakan hari ini. Penjelasan lengkap tampil di aplikasi (Peringkat → Cara penilaian).
+Target ada di sheet `Config`; bobot ada di `Skor.gs`.
 
-## ⚡ Optimasi Performa
+## Config (sheet Config)
 
-Aplikasi menggunakan mekanisme cache untuk mengurangi permintaan API yang tidak diperlukan.
+`ZonaWaktu`, `MaksPercobaanPIN`, `BlokirMenit`, `TanggalMulaiProgram` (2026-11-01), `TargetHalamanHarian`,
+`TargetPuasaRasio`, `AdminTokenJam`, `AdminMaksPercobaan`, `AdminBlokirMenit`, `CacheAgregatMenit`.
+Baris yang kurang ditambahkan lewat menu **Siapkan konfigurasi & sheet Admin** (tidak menimpa data).
 
-Beberapa optimasi:
-- Cache ringkasan data di frontend.
-- Perpindahan tab memanfaatkan cache selama masih berlaku.
-- Pembaruan ringkasan dilakukan di latar belakang.
-- Cache diperbarui setelah penyimpanan data.
-- Pengambilan data disesuaikan dengan kebutuhan pengguna yang sedang login.
+## Deployment
 
-## 🔐 Keamanan dan Privasi
+1. Backend: tempel file `.gs`, jalankan menu **Siapkan konfigurasi & sheet Admin**, buat akun admin,
+   lalu **Deploy → Kelola deployment → pensil → Versi baru** (URL tidak berubah).
+2. Frontend: isi `CONFIG.API_URL` di `js/core.js`, uji di lokal (`python3 -m http.server 8000`),
+   lalu unggah seluruh folder ke GitHub Pages dalam satu commit.
+3. Urutan saat memperbarui: **backend dulu, frontend sesudahnya**.
 
-- Setiap pengguna memiliki akses ke data mutabaah miliknya sendiri.
-- Autentikasi menggunakan PIN dan token.
-- Validasi dilakukan pada backend.
-- Data pengguna tidak dibuka secara langsung kepada publik.
-- Google Sheets tidak dibagikan secara publik.
-- Tanggal di masa mendatang tidak dapat diisi.
-- Penyimpanan data menggunakan mekanisme pengamanan untuk menghindari konflik penulisan.
+## Pemeliharaan
 
-## 🕒 Zona Waktu
+- Anggota baru: tambah baris di sheet `Anggota` (ID, Nama, Status `Aktif`, PIN 4 angka). Anggota keluar: `Nonaktif`.
+- Ganti PIN: ubah di sheet `Anggota` (sesi lama orang itu otomatis tidak berlaku).
+- Setelah mengedit atau menghapus data langsung di Sheet: menu **Segarkan cache data**.
+- Kesehatan sistem: jalankan `periksaSistem()` (hanya membaca). Data ganda: `diagnosaGanda()` (hanya membaca).
+- Backup: File → Buat salinan, secara berkala. Bagikan Sheet hanya ke pengelola.
 
-Aplikasi menggunakan zona waktu:
+## Pengujian
 
-`Asia/Jakarta (WIB)`
-
-## 📌 Catatan
-
-- Aplikasi menggunakan Google Sheets sebagai database.
-- Backend berjalan melalui Google Apps Script.
-- Frontend dan backend dikelola secara terpisah.
-- Jangan menghapus atau mengubah struktur database secara sembarangan karena dapat memengaruhi data yang sudah tersimpan.
-
-## 📄 Lisensi
-
-Project ini dikembangkan untuk kebutuhan pencatatan dan pemantauan ibadah harian secara pribadi maupun bersama.
-
----
-
-**Mutabaah Yaumiyah**  
-*Mencatat kebaikan, menjaga konsistensi, memperbaiki diri setiap hari.*
+- Backend: `testRole`, `testSkor`, `testAdmin`, `testLeaderboard` (aman, tidak menulis data anggota).
+  `testFinal`, `testPerforma`, `testStep14/15` menulis data sementara untuk M01 dan M02, jadi jalankan hanya
+  di salinan spreadsheet atau di luar jam pemakaian.
+- Frontend: `ujiIntegrasi()` di Console, lalu checklist per layar.
