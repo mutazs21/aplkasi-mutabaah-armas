@@ -1,0 +1,66 @@
+/* css/evaluasi.css — Evaluasi bulanan anggota (STEP 4). Dimuat sebelum responsif.css. */
+
+.ev-ket {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.ev-butir {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f2937;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ev-butir:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ev-butir .ev-ikon {
+  flex: 0 0 22px;
+  margin-top: 1px;
+}
+
+.ev-butir.baik .ev-ikon { color: #0f766e; }
+.ev-butir.tingkat .ev-ikon { color: #475569; }
+.ev-butir.rek .ev-ikon { color: #b08d3c; }
+
+.ev-kosong {
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.ev-catatan {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+/* Lima tab navigasi anggota di layar sempit (320px) */
+@media (max-width: 380px) {
+  #nav-bawah .nav-item {
+    padding: 0 1px;
+    font-size: 10px;
+  }
+
+  #nav-bawah .nav-ikon {
+    padding: 4px 8px;
+  }
+}

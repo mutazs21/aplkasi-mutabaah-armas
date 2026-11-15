@@ -1,0 +1,83 @@
+/* css/laporan.css — Laporan bulanan admin (STEP 3). Dimuat sebelum responsif.css.
+ * Memakai kelas dari style.css, analitik.css, admin.css, dan leaderboard.css. */
+
+.lap-ket {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.lap-b-baris {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.lap-b-baris:last-child {
+  border-bottom: 0;
+}
+
+.lap-b-nama {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.lap-b-nilai {
+  font-size: 16px;
+  font-weight: 800;
+  text-align: right;
+  color: #115e59;
+}
+
+.lap-b-sebelum {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Perubahan: netral (tanpa merah) */
+.lap-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.lap-delta.naik { color: #115e59; background: #d1fae5; }
+.lap-delta.turun { color: #475569; background: #e2e8f0; }
+.lap-delta.tetap { color: #475569; background: #f1f5f9; }
+
+.lap-catatan {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.lap-bar-sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.lap-tabel-klik {
+  cursor: pointer;
+}
+
+@media (max-width: 360px) {
+  .lap-b-nilai {
+    font-size: 15px;
+  }
+}
