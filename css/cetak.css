@@ -1,0 +1,62 @@
+/* css/cetak.css — dokumen PDF (STEP 6). Dimuat sebelum responsif.css. */
+
+@media screen {
+  #area-cetak { display: none; }
+}
+
+.cp-aksi {
+  margin: 0 0 12px;
+}
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+
+  body > *:not(#area-cetak) { display: none !important; }
+
+  html, body {
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #area-cetak {
+    display: block !important;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.45;
+    color: #1f2937;
+  }
+
+  .cp-kepala {
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    color: #ffffff;
+    background: #0b3d3a;
+    border-radius: 10px;
+  }
+
+  .cp-merek { margin: 0; font-size: 9pt; letter-spacing: 0.12em; text-transform: uppercase; color: #d4b46a; }
+  .cp-judul { margin: 4px 0 0; font-size: 18pt; font-weight: 700; }
+  .cp-sub { margin: 4px 0 0; font-size: 10pt; color: #ccfbf1; }
+
+  .cp-bagian { margin: 0 0 12px; break-inside: avoid; }
+  .cp-bagian h2 { margin: 0 0 6px; font-size: 12pt; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+  .cp-ket { margin: 0 0 6px; font-size: 9.5pt; color: #475569; }
+
+  .cp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .cp-kotak { padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; break-inside: avoid; }
+  .cp-kotak .angka { margin: 0; font-size: 15pt; font-weight: 700; color: #115e59; }
+  .cp-kotak .label { margin: 0; font-size: 9pt; color: #475569; }
+
+  .cp-daftar { margin: 0; padding-left: 18px; }
+  .cp-daftar li { margin-bottom: 4px; break-inside: avoid; }
+
+  .cp-tabel { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+  .cp-tabel thead { display: table-header-group; }
+  .cp-tabel th { padding: 5px 6px; text-align: left; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
+  .cp-tabel td { padding: 5px 6px; border-bottom: 1px solid #e2e8f0; }
+  .cp-tabel tr { break-inside: avoid; }
+  .cp-tabel .angka { text-align: right; }
+
+  .cp-kaki { margin-top: 14px; padding-top: 8px; font-size: 8.5pt; color: #64748b; border-top: 1px solid #cbd5e1; }
+}
